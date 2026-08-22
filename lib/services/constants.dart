@@ -268,13 +268,13 @@ class AppConstants {
   static const String postCardWithdrawalInitiate =
       "api/credit-card-cash-withdrawal/v1/initiate-withdrawal";
 
-//
-  
-  static const String postSendCreditCardOTP =
-      "api/credit-card-cash-withdrawal/v1/send-otp";
-
   static const String postCreditCardOTPVerify =
       "api/credit-card-cash-withdrawal/v1/verify-withdrawal-otp";
+
+  static const String postResendCreditCardOTP =
+      "api/credit-card-cash-withdrawal/v1/resend-otp";
+
+//
 
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";

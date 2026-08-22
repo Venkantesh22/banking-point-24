@@ -166,7 +166,22 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                   if (creditCardController.canResendOtp) ...[
                     sizedBoxHeight(height: 10),
                     TextButton(
-                      onPressed: creditCardController.resendOtp,
+                      onPressed: () {
+                        creditCardController
+                            .resendCreditCardOTP()
+                            .then((value) {
+                          if (value.isSuccess) {
+                            showToast(
+                                message: value.message,
+                                typeCheck: value.isSuccess);
+                            creditCardController.resendOtp;
+                          } else {
+                            showToast(
+                                message: value.message,
+                                typeCheck: value.isSuccess);
+                          }
+                        });
+                      },
                       child: CustomText(
                         'Resend OTP',
                         style: TextStyle(

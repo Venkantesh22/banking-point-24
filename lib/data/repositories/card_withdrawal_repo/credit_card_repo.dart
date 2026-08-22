@@ -17,10 +17,10 @@ class CreditCardRepo {
 
   //
 
-  Future<Response> sendCreditCardOTP({required FormData data}) async =>
+  Future<Response> resendCreditCardOTP({required FormData data}) async =>
       await apiClient.postData(
-        AppConstants.postSendCreditCardOTP,
-        "sendCreditCardOTP",
+        AppConstants.postResendCreditCardOTP,
+        "resendCreditCardOTP",
         data,
       );
 

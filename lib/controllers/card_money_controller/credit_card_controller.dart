@@ -217,32 +217,35 @@ class CreditCardController extends GetxController implements GetxService {
     return responseModel;
   }
 
-  //* Call request and resend opt credit card sendCreditCardOTP()
-  Future<ResponseModel> sendCreditCardOTP({
-    required String? number,
-  }) async {
-    log('----------- sendCreditCardOTP Called ----------');
+  //* Call request and resend opt credit card resendCreditCardOTP()
+  Future<ResponseModel> resendCreditCardOTP() async {
+    log('----------- resendCreditCardOTP Called ----------');
 
     ResponseModel responseModel;
     isLoading = true;
     update();
 
     try {
-      Map<String, dynamic> data = {};
+      final sessionId =
+          sharedPreferences.getString(AppConstants.apiToken) ?? '';
+      Map<String, dynamic> data = {
+        "session_id": sessionId,
+        "transaction_id": withdrawalModel?.transactionId ?? "",
+      };
       Response response =
-          await creditCardRepo.sendCreditCardOTP(data: FormData(data));
+          await creditCardRepo.resendCreditCardOTP(data: FormData(data));
 
       if (response.statusCode == 200 && response.body['status'] == "success") {
         responseModel = ResponseModel(
-            true, response.body['message'] ?? " sendCreditCardOTP success");
+            true, response.body['message'] ?? " resendCreditCardOTP success");
       } else {
-        responseModel = ResponseModel(
-            false, response.body['message'] ?? "Error while sendCreditCardOTP");
+        responseModel = ResponseModel(false,
+            response.body['message'] ?? "Error while resendCreditCardOTP");
       }
     } catch (e) {
-      log('ERROR AT sendCreditCardOTP(): $e');
+      log('ERROR AT resendCreditCardOTP(): $e');
       responseModel =
-          ResponseModel(false, "Error while submitCreditCardInfo user $e");
+          ResponseModel(false, "Error while resendCreditCardOTP user $e");
     }
 
     isLoading = false;
