@@ -91,7 +91,7 @@ class _ChooseSettlementMethodScreenState
                     : navigate(
                         context: context, page: EnterAccountDetailsScreen());
               },
-              title: "Container..",
+              title: "Container...",
             )
           ],
         ),
