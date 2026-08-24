@@ -124,6 +124,7 @@ class _EnterUpiIdScreenState extends State<EnterUpiIdScreen> {
                     ),
                   ),
                   CustomButton(
+                    isLoading: upiController.isLoading,
                     title: "Validate UPI ID",
                     onTap: () {
                       if (_formKey.currentState?.validate() ?? false) {

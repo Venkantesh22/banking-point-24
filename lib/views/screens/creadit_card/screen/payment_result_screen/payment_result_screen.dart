@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
@@ -7,68 +10,71 @@ import 'package:lekra/views/screens/creadit_card/screen/payment_result_screen/wi
 import 'package:lekra/views/screens/creadit_card/screen/payment_result_screen/widget/payment_result_details.dart';
 import 'package:lekra/views/screens/creadit_card/screen/payment_result_screen/widget/payment_result_header.dart';
 
-
-
-enum PaymentStatus {
-  successful,
-  pending,
-  cancelled,
-}
-
 class PaymentResultScreen extends StatelessWidget {
   const PaymentResultScreen({
     super.key,
-    this.status = PaymentStatus.successful,
   });
-
-  final PaymentStatus status;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(
-                  16.w,
-                  10.h,
-                  16.w,
-                  24.h,
-                ),
-                child: Column(
-                  children: [
-                    PaymentResultHeader(
-                      status: status,
-                    ),
+      body: GetBuilder<CreditCardController>(builder: (creditCardController) {
+        PaymentStatus _getPaymentStatus() {
+          switch (creditCardController
+              .creditCardTransactionModel?.settlementStatus
+              ?.trim()
+              .toUpperCase()) {
+            case 'SUCCESS':
+              return PaymentStatus.successful;
 
-                    sizedBoxHeight(height: 24),
+            case 'PENDING':
+              return PaymentStatus.pending;
 
-                    PaymentResultDetails(
-                      status: status,
-                    ),
+            case 'CASH_DISBURSED':
+              return PaymentStatus.cash;
 
-                    sizedBoxHeight(height: 20),
+            default:
+              return PaymentStatus.cancelled;
+          }
+        }
 
-                    _StatusMessage(
-                      status: status,
-                    ),
+        final PaymentStatus status = _getPaymentStatus();
 
-                    sizedBoxHeight(height: 24),
-
-                    PaymentResultAction(
-                      status: status,
-                    ),
-                  ],
-                ),
-              ),
+        return SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              16.w,
+              10.h,
+              16.w,
+              24.h,
             ),
-          ],
-        ),
-      ),
+            child: Column(
+              children: [
+                PaymentResultHeader(
+                  status: status,
+                ),
+                sizedBoxHeight(height: 24),
+                PaymentResultDetails(
+                  status: status,
+                  transaction:
+                      creditCardController.creditCardTransactionModel ??
+                          CreditCardTransactionModel(),
+                ),
+                sizedBoxHeight(height: 20),
+                _StatusMessage(
+                  status: status,
+                ),
+                sizedBoxHeight(height: 24),
+                PaymentResultAction(
+                  status: status,
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 }
@@ -104,6 +110,12 @@ class _StatusMessage extends StatelessWidget {
         icon = Icons.cancel_outlined;
         color = red;
         break;
+
+      case PaymentStatus.cash:
+        message = 'Cash has been successfully disbursed.';
+        icon = Icons.payments_outlined;
+        color = const Color(0xFF20A865);
+        break;
     }
 
     return Container(
@@ -127,9 +139,7 @@ class _StatusMessage extends StatelessWidget {
             size: 20.sp,
             color: color,
           ),
-
           sizedBoxWidth(width: 9),
-
           Expanded(
             child: CustomText(
               message,

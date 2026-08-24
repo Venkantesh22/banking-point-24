@@ -1,10 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/basic_controlller.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
-
-import '../payment_result_screen.dart';
 
 class PaymentResultHeader extends StatelessWidget {
   const PaymentResultHeader({
@@ -29,7 +31,6 @@ class PaymentResultHeader extends StatelessWidget {
         icon = Icons.check_rounded;
         title = 'Payment Successful!';
         subtitle = 'The payment has been completed successfully.';
-
         break;
 
       case PaymentStatus.pending:
@@ -38,7 +39,6 @@ class PaymentResultHeader extends StatelessWidget {
         icon = Icons.access_time_rounded;
         title = 'Payment Pending';
         subtitle = 'Your payment is being processed.';
-
         break;
 
       case PaymentStatus.cancelled:
@@ -47,40 +47,49 @@ class PaymentResultHeader extends StatelessWidget {
         icon = Icons.close_rounded;
         title = 'Payment Cancelled';
         subtitle = 'The payment was not successful.';
+        break;
 
+      case PaymentStatus.cash:
+        color = const Color(0xFF20B978);
+        lightColor = const Color(0xFFE7F8EF);
+        icon = Icons.payments_rounded;
+        title = 'Cash Disbursed';
+        subtitle = 'Cash has been successfully disbursed.';
         break;
     }
 
     return Column(
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            width: 42.w,
-            height: 42.h,
-            decoration: BoxDecoration(
-              color: white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: greyBorder,
+        GetBuilder<BasicController>(builder: (basicController) {
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              width: 42.w,
+              height: 42.h,
+              decoration: BoxDecoration(
+                color: white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: greyBorder,
+                ),
+              ),
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  basicController.isAndroid
+                      ? Icons.arrow_back
+                      : Icons.arrow_back_ios_new_rounded,
+                  size: 18.sp,
+                  color: textPrimary,
+                ),
               ),
             ),
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18.sp,
-                color: textPrimary,
-              ),
-            ),
-          ),
-        ),
-
+          );
+        }),
         sizedBoxHeight(height: 24),
-
         Container(
           width: 112.w,
           height: 112.h,
@@ -104,9 +113,7 @@ class PaymentResultHeader extends StatelessWidget {
             ),
           ),
         ),
-
         sizedBoxHeight(height: 20),
-
         CustomText(
           title,
           textAlign: TextAlign.center,
@@ -116,9 +123,7 @@ class PaymentResultHeader extends StatelessWidget {
                 color: textPrimary,
               ),
         ),
-
         sizedBoxHeight(height: 8),
-
         CustomText(
           subtitle,
           textAlign: TextAlign.center,

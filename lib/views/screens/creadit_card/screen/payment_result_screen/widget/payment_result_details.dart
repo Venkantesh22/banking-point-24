@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
-
-import '../payment_result_screen.dart';
 
 class PaymentResultDetails extends StatelessWidget {
   const PaymentResultDetails({
     super.key,
     required this.status,
+    required this.transaction,
   });
 
   final PaymentStatus status;
-
-  static const String amount = '₹25,000.00';
-  static const String processingFee = '₹0.00';
-  static const String gst = '₹0.00';
-  static const String totalDebit = '₹25,000.00';
-
-  static const String customerName = 'Rahul Kumar';
-  static const String upiId = 'rahul.kumar@okhdfcbank';
-  static const String bankName = 'HDFC Bank';
-
-  static const String transactionId = 'TXN51234567890';
-  static const String dateTime = '17 Aug 2026 • 02:15 PM';
+  final CreditCardTransactionModel transaction;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +38,12 @@ class PaymentResultDetails extends StatelessWidget {
         statusText = 'Cancelled';
         statusColor = red;
         statusBackground = redLight;
+        break;
+
+      case PaymentStatus.cash:
+        statusText = 'Cash Disbursed';
+        statusColor = const Color(0xFF20A865);
+        statusBackground = const Color(0xFFE7F8EF);
         break;
     }
 
@@ -78,17 +73,17 @@ class PaymentResultDetails extends StatelessWidget {
         children: [
           _DetailRow(
             label: 'Amount',
-            value: amount,
+            value: transaction.amount ?? '-',
           ),
 
           _DetailRow(
             label: 'Processing Fee',
-            value: processingFee,
+            value: transaction.processingFee ?? '-',
           ),
 
           _DetailRow(
             label: 'GST',
-            value: gst,
+            value: transaction.gst ?? '-',
           ),
 
           Padding(
@@ -101,10 +96,13 @@ class PaymentResultDetails extends StatelessWidget {
 
           _DetailRow(
             label: 'Total Debit',
-            value: totalDebit,
-            valueColor: status == PaymentStatus.cancelled
-                ? red
-                : textPrimary,
+            value: transaction.totalDebit ??
+                transaction.totalDebitAmount ??
+                '-',
+            valueColor:
+                status == PaymentStatus.cancelled
+                    ? red
+                    : textPrimary,
             valueFontWeight: FontWeight.w700,
           ),
 
@@ -118,27 +116,41 @@ class PaymentResultDetails extends StatelessWidget {
 
           _DetailRow(
             label: 'Customer',
-            value: customerName,
-          ),
-
-          _DetailRow(
-            label: 'UPI ID',
-            value: upiId,
+            value: transaction.customerName ??
+                transaction.recipientName ??
+                '-',
           ),
 
           _DetailRow(
             label: 'Bank',
-            value: bankName,
+            value: transaction.bankName ?? '-',
+          ),
+
+          _DetailRow(
+            label: 'Destination',
+            value: transaction.destination ?? '-',
+          ),
+
+          _DetailRow(
+            label: 'Settlement Type',
+            value: transaction.settlementType ?? '-',
           ),
 
           _DetailRow(
             label: 'Transaction ID',
-            value: transactionId,
+            value: transaction.transactionId ?? '-',
           ),
+
+          if (transaction.utr != null &&
+              transaction.utr!.trim().isNotEmpty)
+            _DetailRow(
+              label: 'UTR',
+              value: transaction.utr!,
+            ),
 
           _DetailRow(
             label: 'Date & Time',
-            value: dateTime,
+            value: transaction.dateTime ?? '-',
           ),
 
           Padding(
@@ -148,13 +160,15 @@ class PaymentResultDetails extends StatelessWidget {
                 Expanded(
                   child: CustomText(
                     'Status',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(
                           fontSize: 13.sp,
                           color: textSecondary,
                         ),
                   ),
                 ),
-
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 12.w,
@@ -166,7 +180,10 @@ class PaymentResultDetails extends StatelessWidget {
                   ),
                   child: CustomText(
                     statusText,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                           color: statusColor,
@@ -205,20 +222,24 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: CustomText(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(
                     fontSize: 13.sp,
                     color: textSecondary,
                   ),
             ),
           ),
-
           sizedBoxWidth(width: 12),
-
           Flexible(
             child: CustomText(
               value,
               textAlign: TextAlign.right,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(
                     fontSize: 13.sp,
                     fontWeight: valueFontWeight,
                     color: valueColor ?? textPrimary,

@@ -279,6 +279,10 @@ class AppConstants {
   static const String postValidateCustomerUPI =
       "api/credit-card-cash-withdrawal/v1/validate-upi";
 
+  static const String postSendMoneyToUPIOrBank =
+      "api/credit-card-cash-withdrawal/v1/process-settlement";
+
+//
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";
 

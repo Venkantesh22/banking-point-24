@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/withdrawal_model.dart';
 import 'package:lekra/data/models/response/response_model.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/credit_card_repo.dart';
@@ -286,6 +287,54 @@ class CreditCardController extends GetxController implements GetxService {
       log('ERROR AT creditCardOTPVerify(): $e');
       responseModel =
           ResponseModel(false, "Error while creditCardOTPVerify user $e");
+    }
+
+    isLoading = false;
+    update();
+    return responseModel;
+  }
+
+  CreditCardTransactionModel? creditCardTransactionModel;
+  Future<ResponseModel> sendMoneyToUPIOrBank({
+    required bool isUpi,
+    required String upiId,
+    required String recipientName,
+  }) async {
+    log('----------- sendMoneyToUPIOrBank Called ----------');
+
+    ResponseModel responseModel;
+
+    isLoading = true;
+    update();
+
+    try {
+      final sessionId =
+          sharedPreferences.getString(AppConstants.apiToken) ?? '';
+
+      Map<String, dynamic> data = {
+        "session_id": sessionId,
+        "transaction_id": withdrawalModel?.transactionId ?? "",
+        "type": isUpi ? "upi" : "bank",
+        "upi_id": upiId,
+        "recipient_name": recipientName
+      };
+
+      Response response =
+          await creditCardRepo.sendMoneyToUPIOrBank(data: FormData(data));
+
+      if (response.statusCode == 200 && response.body['success'] == true) {
+        creditCardTransactionModel =
+            CreditCardTransactionModel.fromJson(response.body['data']);
+        responseModel = ResponseModel(
+            true, response.body['message'] ?? " sendMoneyToUPIOrBank success");
+      } else {
+        responseModel = ResponseModel(false,
+            response.body['message'] ?? "Error while sendMoneyToUPIOrBank");
+      }
+    } catch (e) {
+      log('ERROR AT sendMoneyToUPIOrBank(): $e');
+      responseModel =
+          ResponseModel(false, "Error while sendMoneyToUPIOrBank user $e");
     }
 
     isLoading = false;

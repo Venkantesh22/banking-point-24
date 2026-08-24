@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_upi_model.dart';
 import 'package:lekra/generated/assets.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 
 class CustomerUpiCard extends StatelessWidget {
+  final CreditCardUpiModel? cardUpiModel;
   const CustomerUpiCard({
     super.key,
+    required this.cardUpiModel,
   });
-
-  // Demo data
-  static const String customerName = 'Rahul Kumar';
-  static const String upiId = 'rahul.kumar@okhdfcbank';
-  static const String bankName = 'HDFC Bank';
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +71,7 @@ class CustomerUpiCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      customerName,
+                      cardUpiModel?.recipientName ?? "",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -82,7 +80,7 @@ class CustomerUpiCard extends StatelessWidget {
                     ),
                     sizedBoxHeight(height: 4),
                     CustomText(
-                      upiId,
+                      cardUpiModel?.upiId ?? "",
                       maxLines: 1,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontSize: 11.sp,
@@ -91,7 +89,7 @@ class CustomerUpiCard extends StatelessWidget {
                     ),
                     sizedBoxHeight(height: 4),
                     CustomText(
-                      bankName,
+                      "HDFC Bank",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontSize: 11.sp,
                             color: textSecondary,

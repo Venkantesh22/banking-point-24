@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/multipart/form_data.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:get/state_manager.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_upi_model.dart';
 import 'package:lekra/data/models/response/response_model.dart';
+import 'package:lekra/data/models/upi_model.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/upi_repo.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +22,7 @@ class UpiController extends GetxController implements GetxService {
   final TextEditingController upiController =
       TextEditingController(text: 'rahul.kumar@okhdfcbank');
 
+  CreditCardUpiModel? creditCardUpiModel;
   //* Validate Customer UPI id validateCustomerUPI()
   Future<ResponseModel> validateCustomerUPI() async {
     log('----------- validateCustomerUPI Called ----------');
@@ -41,6 +44,7 @@ class UpiController extends GetxController implements GetxService {
           await upiRepo.validateCustomerUPI(data: FormData(data));
 
       if (response.statusCode == 200 && response.body['success'] == true) {
+        creditCardUpiModel = CreditCardUpiModel.fromJson(response.body['data']);
         responseModel = ResponseModel(
             true, response.body['message'] ?? " validateCustomerUPI success");
       } else {
@@ -57,6 +61,8 @@ class UpiController extends GetxController implements GetxService {
     update();
     return responseModel;
   }
+
+
 
   @override
   void dispose() {

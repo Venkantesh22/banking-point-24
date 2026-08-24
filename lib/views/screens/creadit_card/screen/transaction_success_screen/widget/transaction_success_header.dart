@@ -19,6 +19,7 @@ class TransactionSuccessHeader extends StatelessWidget {
         Container(
           width: 110.w,
           height: 110.h,
+          
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFE7F8EF),

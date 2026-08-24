@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/state_manager.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
+import 'package:lekra/controllers/card_money_controller/upi_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/theme.dart';
+import 'package:lekra/views/base/shimmer.dart';
 import 'package:lekra/views/screens/creadit_card/screen/payment_result_screen/payment_result_screen.dart';
 import 'package:lekra/views/screens/creadit_card/screen/upi_flow/confirm_pay_screen/widget/confirm_pay_header.dart';
 import 'package:lekra/views/screens/creadit_card/screen/upi_flow/confirm_pay_screen/widget/customer_upi_card.dart';
@@ -20,40 +24,67 @@ class ConfirmPayScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: AppConstants.screenPadding,
-          child: Column(
-            children: [
-              const ConfirmPayHeader(),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      const CustomerUpiCard(),
-                      sizedBoxHeight(height: 16),
-                      const PaymentAmountCard(),
-                      sizedBoxHeight(height: 24),
-                    ],
+      body: GetBuilder<UpiController>(builder: (upiController) {
+        return SafeArea(
+          child: Padding(
+            padding: AppConstants.screenPadding,
+            child: Column(
+              children: [
+                const ConfirmPayHeader(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        CustomShimmer(
+                          isLoading: upiController.isLoading,
+                          child: CustomerUpiCard(
+                            cardUpiModel: upiController.creditCardUpiModel,
+                          ),
+                        ),
+                        sizedBoxHeight(height: 16),
+                        const PaymentAmountCard(),
+                        sizedBoxHeight(height: 24),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const _SecureTransactionMessage(),
-              sizedBoxHeight(height: 18),
-              SendMoneyButton(
-                onTap: () {
-                  navigate(context: context, page: PaymentResultScreen(
-                    status: PaymentStatus.cancelled,
-                  ));
-                  debugPrint('Send Money');
-                },
-              ),
-              sizedBoxHeight(height: 18),
-            ],
+                const _SecureTransactionMessage(),
+                sizedBoxHeight(height: 18),
+                GetBuilder<CreditCardController>(
+                    builder: (creditCardController) {
+                  return SendMoneyButton(
+                    onTap: () {
+                      creditCardController
+                          .sendMoneyToUPIOrBank(
+                              isUpi: true,
+                              upiId:
+                                  upiController.creditCardUpiModel?.upiId ?? "",
+                              recipientName: upiController
+                                      .creditCardUpiModel?.recipientName ??
+                                  "")
+                          .then((value) {
+                        if (value.isSuccess) {
+                          navigate(
+                              context: context, page: PaymentResultScreen());
+                          showToast(
+                              message: value.message,
+                              typeCheck: value.isSuccess);
+                        } else {
+                          showToast(
+                              message: value.message,
+                              typeCheck: value.isSuccess);
+                        }
+                      });
+                    },
+                  );
+                }),
+                sizedBoxHeight(height: 18),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
