@@ -296,10 +296,12 @@ class CreditCardController extends GetxController implements GetxService {
 
   CreditCardTransactionModel? creditCardTransactionModel;
   Future<ResponseModel> sendMoneyToUPIOrBank({
-    
     required bool isUpi,
-    required String upiId,
-    required String recipientName,
+    String? upiId,
+    String? recipientName,
+    String? accountNo,
+    String? ifscCode,
+    String? bankName,
   }) async {
     log('----------- sendMoneyToUPIOrBank Called ----------');
 
@@ -312,13 +314,23 @@ class CreditCardController extends GetxController implements GetxService {
       final sessionId =
           sharedPreferences.getString(AppConstants.apiToken) ?? '';
 
-      Map<String, dynamic> data = {
-        "session_id": sessionId,
-        "transaction_id": withdrawalModel?.transactionId ?? "",
-        "type": isUpi ? "upi" : "bank",
-        "upi_id": upiId,
-        "recipient_name": recipientName
-      };
+      Map<String, dynamic> data = isUpi
+          ? {
+              "session_id": sessionId,
+              "transaction_id": withdrawalModel?.transactionId ?? "",
+              "type": "upi",
+              "upi_id": upiId,
+              "recipient_name": recipientName
+            }
+          : {
+              "session_id": sessionId,
+              "transaction_id": withdrawalModel?.transactionId ?? "",
+              "type": "bank",
+              "account_number": accountNo,
+              "ifsc": ifscCode,
+              "account_holder_name": recipientName,
+              "bank_name": bankName,
+            };
 
       Response response =
           await creditCardRepo.sendMoneyToUPIOrBank(data: FormData(data));
@@ -471,7 +483,6 @@ class CreditCardController extends GetxController implements GetxService {
     cvvController.dispose();
     cardHolderNameController.dispose();
     bankNameController.dispose();
-
 
     _otpTimer?.cancel();
     for (final controller in otpControllers) {
