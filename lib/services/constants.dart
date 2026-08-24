@@ -254,8 +254,8 @@ class AppConstants {
   static const String postSubmitCustomKyc =
       'api/credit-card-cash-withdrawal/v1/kyc';
 
-  static const String postSubmitCustomKycLivePhoto =
-      'api/credit-card-cash-withdrawal/v1/live-photo';
+  static const String postCustomerKycMobileCreditCardOTP =
+      "api/credit-card-cash-withdrawal/v1/send-kyc-otp";
 
   //* Credit card withdrawal api
 
@@ -289,11 +289,12 @@ class AppConstants {
 
 //* validate bank infor
 
-  static const String postConfirmAndTransaction =
-      "api/credit-card-cash-withdrawal/v1/confirm";
-
   static const String postValidateBankAccountInfo =
       "api/credit-card-cash-withdrawal/v1/verify-account";
+  //
+
+  static const String postConfirmAndTransaction =
+      "api/credit-card-cash-withdrawal/v1/confirm";
 
   static String getCreditCardCashWithdrawalTransactionStatus(
           {required String transactionId}) =>

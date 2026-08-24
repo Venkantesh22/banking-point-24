@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -469,39 +470,114 @@ class CustomKycController extends GetxController implements GetxService {
     return file.path.split(Platform.pathSeparator).last;
   }
 
-  //* Call Submit custom Kyc Live photo Api submitCustomKycLivePhoto()
-  Future<ResponseModel> submitCustomKycLivePhoto({
-    required String? number,
-  }) async {
-    log('----------- submitCustomKycLivePhoto Called ----------');
+  Future<ResponseModel> customerKycMobileCreditCardOTP() async {
+    log('----------- customerKycMobileCreditCardOTP Called ----------');
 
     ResponseModel responseModel;
+
     isLoading = true;
     update();
 
     try {
+      final apiToken = sharedPreferences.getString(AppConstants.apiToken) ?? '';
+
       Map<String, dynamic> data = {
-        "selfie": livePhoto,
+        "session_id": apiToken,
+        "mobile_number": mobileNumberController.text.trim(),
       };
-      Response response =
-          await customKycRepo.submitCustomKycLivePhoto(data: FormData(data));
+      Response response = await customKycRepo.customerKycMobileCreditCardOTP(
+          data: FormData(data));
 
       if (response.statusCode == 200 && response.body['status'] == "success") {
-        responseModel = ResponseModel(true,
-            response.body['message'] ?? " submitCustomKycLivePhoto success");
+        checkCustomKyc = CheckCustomKyc.fromJson(
+          response.body,
+        );
+
+        responseModel = ResponseModel(
+          true,
+          response.body['message'] ?? "OTP sent successfully",
+        );
       } else {
-        responseModel = ResponseModel(false,
-            response.body['message'] ?? "Error while submitCustomKycLivePhoto");
+        responseModel = ResponseModel(
+            false,
+            response.body['message'] ??
+                "Error while customerKycMobileCreditCardOTP");
       }
     } catch (e) {
-      log('ERROR AT submitCustomKycLivePhoto(): $e');
-      responseModel =
-          ResponseModel(false, "Error while submitCustomKycLivePhoto user $e");
+      log('ERROR AT customerKycMobileCreditCardOTP(): $e');
+      responseModel = ResponseModel(
+          false, "Error while customerKycMobileCreditCardOTP user $e");
     }
 
     isLoading = false;
     update();
     return responseModel;
+  }
+
+  Future<ResponseModel> verifyCustomerKycOtp() async {
+    log('----------- verifyCustomerKycOtp Called ----------');
+
+    if (otp.length != 6) {
+      return ResponseModel(
+        false,
+        'Please enter a valid 6 digit OTP',
+      );
+    }
+
+    isLoading = true;
+    update();
+
+    try {
+      final apiToken = sharedPreferences.getString(AppConstants.apiToken) ?? '';
+
+      final Map<String, dynamic> data = {
+        "session_id": apiToken,
+        "mobile_number": mobileNumberController.text.trim(),
+        "otp": otp,
+      };
+
+      final Response response =
+          await customKycRepo.customerKycMobileCreditCardOTP(
+        data: FormData(data),
+      );
+
+      log('STATUS CODE: ${response.statusCode}');
+      log('RESPONSE BODY: ${response.body}');
+
+      if (response.statusCode == 200 && response.body['status'] == 'success') {
+        isOtpVerified = true;
+        isMobileVerified = true;
+
+        _otpTimer?.cancel();
+        _otpTimer = null;
+
+        update();
+
+        return ResponseModel(
+          true,
+          response.body['message']?.toString() ??
+              'Mobile number verified successfully',
+        );
+      }
+
+      return ResponseModel(
+        false,
+        response.body['message']?.toString() ?? 'OTP verification failed',
+      );
+    } catch (e, stackTrace) {
+      log(
+        'ERROR AT verifyCustomerKycOtp(): $e',
+        stackTrace: stackTrace,
+      );
+
+      return ResponseModel(
+        false,
+        'Error while verifying OTP: $e',
+      );
+    } finally {
+      isLoading = false;
+      update();
+    }
   }
 
   //* Call confirm and Transaction credit card confirmAndTransaction()
@@ -579,6 +655,49 @@ class CustomKycController extends GetxController implements GetxService {
   }
 
   // ============================================================
+// OTP TIMER
+// ============================================================
+
+  Timer? _otpTimer;
+
+  int otpSecondsRemaining = 30;
+
+  bool otpSent = false;
+
+  bool get canResendOtp {
+    return otpSent && otpSecondsRemaining <= 0;
+  }
+
+  String get otpTimerText {
+    final seconds = otpSecondsRemaining.toString().padLeft(2, '0');
+
+    return '00:$seconds';
+  }
+
+  void startOtpTimer() {
+    _otpTimer?.cancel();
+
+    otpSent = true;
+    otpSecondsRemaining = 30;
+
+    update();
+
+    _otpTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        if (otpSecondsRemaining > 0) {
+          otpSecondsRemaining--;
+          update();
+        } else {
+          timer.cancel();
+          _otpTimer = null;
+          update();
+        }
+      },
+    );
+  }
+
+  // ============================================================
   // CLEAR
   // ============================================================
 
@@ -602,9 +721,25 @@ class CustomKycController extends GetxController implements GetxService {
     aadhaarBackImage = null;
     livePhoto = null;
 
+    for (final controller in otpControllers) {
+      controller.dispose();
+    }
+
+    _otpTimer?.cancel();
+
     update();
   }
 
+  void clearOtpOnly() {
+    for (final controller in otpControllers) {
+      controller.clear();
+    }
+
+    otp = '';
+    isOtpVerified = false;
+
+    update();
+  }
   // ============================================================
   // STATE
   // ============================================================
@@ -661,5 +796,78 @@ class CustomKycController extends GetxController implements GetxService {
     }
 
     super.onClose();
+  }
+
+  void resetAllKycForm() {
+    // ============================================================
+    // STOP OTP TIMER
+    // ============================================================
+
+    _otpTimer?.cancel();
+    _otpTimer = null;
+
+    // ============================================================
+    // TEXT FIELDS
+    // ============================================================
+
+    fullNameController.clear();
+    // mobileNumberController.clear();
+    emailController.clear();
+    panController.clear();
+
+    // ============================================================
+    // OTP
+    // ============================================================
+
+    for (final controller in otpControllers) {
+      controller.clear();
+    }
+
+    otp = '';
+
+    // ============================================================
+    // OTP STATE
+    // ============================================================
+
+    isMobileVerified = false;
+    isOtpVerified = false;
+
+    // ============================================================
+    // OTP TIMER STATE
+    // ============================================================
+
+    otpSent = false;
+    otpSecondsRemaining = 30;
+
+    // ============================================================
+    // SUBMIT STATE
+    // ============================================================
+
+    isSubmitting = false;
+    isLoading = false;
+
+    // ============================================================
+    // KYC IMAGES
+    // ============================================================
+
+    panCardImage = null;
+    aadhaarFrontImage = null;
+    aadhaarBackImage = null;
+    livePhoto = null;
+
+    // ============================================================
+    // API / RESPONSE STATE
+    // ============================================================
+
+    checkCustomKyc = null;
+    cardCashWithdrawalCustomKycStatusModel = null;
+
+    // ============================================================
+    // KYC STATUS
+    // ============================================================
+
+    status = KycStatus.pending;
+
+    update();
   }
 }

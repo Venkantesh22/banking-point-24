@@ -23,6 +23,15 @@ class CustomKycScreen extends StatefulWidget {
 }
 
 class _CustomKycScreenState extends State<CustomKycScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      
+      Get.find<CustomKycController>().resetAllKycForm();
+    });
+  }
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -123,79 +132,97 @@ class _CustomKycScreenState extends State<CustomKycScreen> {
                     // MOBILE NUMBER
                     // --------------------------------------------------
 
-                    AppTextFieldWithHeading(
-                      controller: controller.mobileNumberController,
-                      heading: 'Mobile Number',
-                      hindText: 'Enter mobile number',
-                      prefixText: '+91 ',
-                      keyboardType: TextInputType.phone,
-                      textInputAction: TextInputAction.next,
-                      maxLength: 10,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      isRequired: true,
-                      readOnly: controller.isMobileVerified,
-                      suffix: controller.isMobileVerified
-                          ? Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 20.r,
-                            )
-                          : TextButton(
-                              onPressed: () {
-                                formKey.currentState?.validate();
+                    GetBuilder<CustomKycController>(
+                      builder: (controller) {
+                        return Column(
+                          children: [
+                            AppTextFieldWithHeading(
+                              controller: controller.mobileNumberController,
+                              heading: 'Mobile Number',
+                              hindText: 'Enter mobile number',
+                              prefixText: '+91 ',
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.next,
+                              maxLength: 10,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              isRequired: true,
+                              readOnly: controller.isMobileVerified,
+                              suffix: controller.isMobileVerified
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 20.r,
+                                    )
+                                  : TextButton(
+                                      onPressed: () async {
+                                        final mobile = controller
+                                            .mobileNumberController.text
+                                            .trim();
 
-                                final String mobile = controller
-                                    .mobileNumberController.text
-                                    .trim();
+                                        if (!RegExp(r'^[6-9][0-9]{9}$')
+                                            .hasMatch(mobile)) {
+                                          showToast(
+                                            message:
+                                                'Please enter a valid mobile number',
+                                            toastType: ToastType.warning,
+                                          );
+                                          return;
+                                        }
 
-                                if (RegExp(
-                                  r'^[6-9][0-9]{9}$',
-                                ).hasMatch(mobile)) {
-                                  controller.setMobileVerified(
-                                    true,
-                                  );
+                                        final result = await controller
+                                            .customerKycMobileCreditCardOTP();
+
+                                        if (result.isSuccess) {
+                                          controller.startOtpTimer();
+
+                                          showToast(
+                                            message: result.message,
+                                            typeCheck: true,
+                                          );
+                                        } else {
+                                          showToast(
+                                            message: result.message,
+                                            typeCheck: false,
+                                          );
+                                        }
+                                      },
+                                      child: CustomText(
+                                        'Verify',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter mobile number';
                                 }
+
+                                if (!RegExp(
+                                  r'^[6-9][0-9]{9}$',
+                                ).hasMatch(value.trim())) {
+                                  return 'Please enter a valid 10 digit mobile number';
+                                }
+
+                                return null;
                               },
-                              child: CustomText(
-                                'Verify',
-                                style: TextStyle(
-                                  color: primaryColor,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
                             ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter mobile number';
-                        }
-
-                        if (!RegExp(
-                          r'^[6-9][0-9]{9}$',
-                        ).hasMatch(value.trim())) {
-                          return 'Please enter a valid 10 digit mobile number';
-                        }
-
-                        return null;
+                            sizedBoxHeight(height: 16),
+                            if (!controller.isMobileVerified) ...[
+                              SectionTitle(
+                                title: 'OTP Verification',
+                              ),
+                              sizedBoxHeight(height: 8),
+                              CustomerOtpVerificationSection(),
+                            ],
+                          ],
+                        );
                       },
                     ),
-
-                    sizedBoxHeight(height: 16),
-
-                    // ==================================================
-                    // OTP
-                    // ==================================================
-
-                    SectionTitle(
-                      title: 'OTP Verification',
-                    ),
-
-                    sizedBoxHeight(height: 8),
-
-                    CustomerOtpVerificationSection(),
-
                     sizedBoxHeight(height: 16),
 
                     // ==================================================

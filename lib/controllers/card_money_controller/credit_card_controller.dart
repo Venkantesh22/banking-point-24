@@ -472,9 +472,7 @@ class CreditCardController extends GetxController implements GetxService {
     cardHolderNameController.dispose();
     bankNameController.dispose();
 
-    for (final controller in otpControllers) {
-      controller.dispose();
-    }
+
     _otpTimer?.cancel();
     for (final controller in otpControllers) {
       controller.dispose();
