@@ -296,6 +296,7 @@ class CreditCardController extends GetxController implements GetxService {
 
   CreditCardTransactionModel? creditCardTransactionModel;
   Future<ResponseModel> sendMoneyToUPIOrBank({
+    
     required bool isUpi,
     required String upiId,
     required String recipientName,
