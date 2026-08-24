@@ -282,7 +282,13 @@ class AppConstants {
   static const String postSendMoneyToUPIOrBank =
       "api/credit-card-cash-withdrawal/v1/process-settlement";
 
+  //* Credit card money want cash
+
+  static const String postMoneyWantCash =
+      "api/credit-card-cash-withdrawal/v1/settle-cash";
+
 //
+
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";
 

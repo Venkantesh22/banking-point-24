@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/state_manager.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/screens/creadit_card/screen/choose_settlement_method_screen/choose_settlement_method_screen.dart';
+import 'package:lekra/views/screens/creadit_card/screen/payment_result_screen/payment_result_screen.dart';
 
 class SettlementOptions extends StatelessWidget {
   const SettlementOptions({
@@ -31,16 +34,27 @@ class SettlementOptions extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(
-            child: SettlementOptionItem(
-              icon: Icons.payments_outlined,
-              iconColor: const Color(0xFF20A865),
-              title: 'Want Money Cash',
-              onTap: () {
-                debugPrint('Want Money Cash');
-              },
-            ),
-          ),
+          GetBuilder<CreditCardController>(builder: (creditCardController) {
+            return Expanded(
+              child: SettlementOptionItem(
+                icon: Icons.payments_outlined,
+                iconColor: const Color(0xFF20A865),
+                title: 'Want Money Cash',
+                onTap: () {
+                  creditCardController.moneyWantCash().then((value) {
+                    if (value.isSuccess) {
+                      showToast(
+                          message: value.message, typeCheck: value.isSuccess);
+                      navigate(context: context, page: PaymentResultScreen());
+                    } else {
+                      showToast(
+                          message: value.message, typeCheck: value.isSuccess);
+                    }
+                  });
+                },
+              ),
+            );
+          }),
           Container(
             width: 1,
             height: 70.h,

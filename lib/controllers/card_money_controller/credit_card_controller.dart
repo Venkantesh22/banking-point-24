@@ -342,6 +342,45 @@ class CreditCardController extends GetxController implements GetxService {
     return responseModel;
   }
 
+  Future<ResponseModel> moneyWantCash() async {
+    log('----------- moneyWantCash Called ----------');
+
+    ResponseModel responseModel;
+
+    isLoading = true;
+    update();
+
+    try {
+      final sessionId =
+          sharedPreferences.getString(AppConstants.apiToken) ?? '';
+
+      Map<String, dynamic> data = {
+        "session_id": sessionId,
+        "transaction_id": withdrawalModel?.transactionId ?? ""
+      };
+
+      Response response =
+          await creditCardRepo.moneyWantCash(data: FormData(data));
+
+      if (response.statusCode == 200 && response.body['success'] == true) {
+        creditCardTransactionModel =
+            CreditCardTransactionModel.fromJson(response.body['data']);
+        responseModel = ResponseModel(
+            true, response.body['message'] ?? " moneyWantCash success");
+      } else {
+        responseModel = ResponseModel(
+            false, response.body['message'] ?? "Error while moneyWantCash");
+      }
+    } catch (e) {
+      log('ERROR AT moneyWantCash(): $e');
+      responseModel = ResponseModel(false, "Error while moneyWantCash user $e");
+    }
+
+    isLoading = false;
+    update();
+    return responseModel;
+  }
+
   // ============================================================
   // CLEAR
   // ============================================================

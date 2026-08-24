@@ -37,4 +37,11 @@ class CreditCardRepo {
         "sendMoneyToUPIOrBank",
         data,
       );
+
+  Future<Response> moneyWantCash({required FormData data}) async =>
+      await apiClient.postData(
+        AppConstants.postMoneyWantCash,
+        "moneyWantCash",
+        data,
+      );
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/screens/creadit_card/screen/transaction_success_screen/widget/settlement_options.dart';
@@ -18,18 +20,46 @@ class TransactionSuccessScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: AppConstants.screenPadding,
-          child: Column(
-            children: [
-              const TransactionSuccessHeader(),
-              sizedBoxHeight(height: 24),
-              const TransactionDetailsCard(),
-              sizedBoxHeight(height: 20),
-              const SettlementOptions(),
-            ],
-          ),
+        child: GetBuilder<CreditCardController>(
+          builder: (creditCardController) {
+            return Stack(
+              children: [
+                // =====================================================
+                // SCREEN CONTENT
+                // =====================================================
+
+                SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: AppConstants.screenPadding,
+                  child: Column(
+                    children: [
+                      const TransactionSuccessHeader(),
+                      sizedBoxHeight(height: 24),
+                      const TransactionDetailsCard(),
+                      sizedBoxHeight(height: 20),
+                      const SettlementOptions(),
+                    ],
+                  ),
+                ),
+
+                // =====================================================
+                // LOADING OVERLAY
+                // =====================================================
+
+                if (creditCardController.isLoading)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withValues(
+                        alpha: 0.25,
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
