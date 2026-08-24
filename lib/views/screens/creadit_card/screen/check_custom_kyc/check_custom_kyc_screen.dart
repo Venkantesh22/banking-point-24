@@ -277,6 +277,7 @@ class _CheckCustomerKycScreenState extends State<CheckCustomerKycScreen> {
                     // ==================================================
 
                     CustomButton(
+                      isLoading: controller.isLoading,
                       title: 'Check Customer KYC',
                       height: 52.h,
                       radius: 12.r,

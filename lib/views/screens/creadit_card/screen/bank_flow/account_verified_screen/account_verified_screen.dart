@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/card_money_controller/upi_bank_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/theme.dart';
+import 'package:lekra/views/base/base/shimmer.dart';
+import 'package:lekra/views/base/common_button.dart';
 import 'package:lekra/views/screens/creadit_card/screen/bank_flow/account_verified_screen/widget/account_verified_header.dart';
-import 'package:lekra/views/screens/creadit_card/screen/bank_flow/account_verified_screen/widget/proceed_to_confirm_button.dart';
 import 'package:lekra/views/screens/creadit_card/screen/bank_flow/account_verified_screen/widget/verified_account_details.dart';
 import 'package:lekra/views/screens/creadit_card/screen/bank_flow/bank_confirm_pay_screen/bank_confirm_pay_screen.dart';
 
@@ -19,32 +23,46 @@ class AccountVerifiedScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: AppConstants.screenPadding,
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      const AccountVerifiedHeader(),
-                      sizedBoxHeight(height: 28),
-                      const VerifiedAccountDetails(),
-                      sizedBoxHeight(height: 24),
-                    ],
+        child: GetBuilder<UpiBankController>(builder: (upiBankController) {
+          return Padding(
+            padding: AppConstants.screenPadding,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        const AccountVerifiedHeader(),
+                        sizedBoxHeight(height: 28),
+                        CustomShimmer(
+                          isLoading: upiBankController.isLoading,
+                          child: VerifiedAccountDetails(
+                            bankInfoModel: upiBankController.bankInfoModel,
+                          ),
+                        ),
+                        sizedBoxHeight(height: 24),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              ProceedToConfirmButton(
-                onTap: () {
-                  debugPrint('Proceed to Confirm');
-                  navigate(context: context, page: BankConfirmPayScreen());
-                },
-              ),
-            ],
-          ),
-        ),
+                CustomButton(
+                  isLoading: upiBankController.isLoading,
+                  title: 'Proceed to Confirm',
+                  type: ButtonType.primary,
+                  onTap: () {
+                    debugPrint('Proceed to Confirm');
+                    navigate(context: context, page: BankConfirmPayScreen());
+                  },
+                  height: 52.h,
+                  radius: 14.r,
+                  borderWidth: 0,
+                  fontSize: 14.sp,
+                )
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

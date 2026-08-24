@@ -155,6 +155,7 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                   ),
 
                   CustomText(
+                    
                     creditCardController.canResendOtp
                         ? 'Didn’t receive OTP?'
                         : 'Resend OTP in ${creditCardController.otpTimerText}',
@@ -198,6 +199,7 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                   ),
 
                   CustomButton(
+                    isLoading: creditCardController.isLoading,
                     title: 'Verify OTP',
                     height: 48.h,
                     radius: 8.r,

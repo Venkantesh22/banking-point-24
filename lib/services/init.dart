@@ -2,10 +2,9 @@ import 'dart:developer';
 import 'package:get/instance_manager.dart';
 import 'package:lekra/controllers/basic_controlller.dart';
 import 'package:lekra/controllers/card_controller.dart';
-import 'package:lekra/controllers/card_money_controller/bank_controller.dart';
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/controllers/card_money_controller/custom_kyc_controller.dart';
-import 'package:lekra/controllers/card_money_controller/upi_controller.dart';
+import 'package:lekra/controllers/card_money_controller/upi_bank_controller.dart';
 import 'package:lekra/controllers/dashboard_controller.dart';
 import 'package:lekra/controllers/dispute_controller.dart';
 import 'package:lekra/controllers/kyc_controller/bank_details_controller.dart';
@@ -28,7 +27,7 @@ import 'package:lekra/controllers/wallet_controller.dart';
 import 'package:lekra/data/repositories/card_repo.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/credit_card_repo.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/custom_kyc_repo.dart';
-import 'package:lekra/data/repositories/card_withdrawal_repo/upi_repo.dart';
+import 'package:lekra/data/repositories/card_withdrawal_repo/upi_bank_repo.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/vender_kyc_repo.dart';
 import 'package:lekra/data/repositories/dispute_repo.dart';
 import 'package:lekra/data/repositories/kyc_repo.dart';
@@ -89,7 +88,7 @@ class Init {
       //* Custom KYC controller
       Get.lazyPut(() => CustomKycRepo(apiClient: Get.find()));
       Get.lazyPut(() => CreditCardRepo(apiClient: Get.find()));
-      Get.lazyPut(() => UpiRepo(apiClient: Get.find()));
+      Get.lazyPut(() => UpiBankRepo(apiClient: Get.find()));
 
       //* Vender kYC
       Get.lazyPut(
@@ -137,8 +136,8 @@ class Init {
       Get.lazyPut(() => BankDetailsController(venderKycRepo: Get.find()));
       Get.lazyPut(() => BankDocumentUploadController());
       Get.lazyPut(() => KycReviewController(venderKycRepo: Get.find()));
-      Get.lazyPut(() =>
-          UpiController(upiRepo: Get.find(), sharedPreferences: Get.find()));
+      Get.lazyPut(() => UpiBankController(
+          upiBankRepo: Get.find(), sharedPreferences: Get.find()));
 
       //* Custom KYC controller
 
@@ -153,7 +152,6 @@ class Init {
             creditCardRepo: Get.find(),
             sharedPreferences: Get.find(),
           ));
-      Get.lazyPut(() => BankController());
     } catch (e) {
       log('---- ${e.toString()} ----', name: "ERROR AT initialize()");
     }

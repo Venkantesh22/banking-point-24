@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/state_manager.dart';
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
-import 'package:lekra/controllers/card_money_controller/upi_controller.dart';
+import 'package:lekra/controllers/card_money_controller/upi_bank_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/base/shimmer.dart';
@@ -24,7 +24,7 @@ class ConfirmPayScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      body: GetBuilder<UpiController>(builder: (upiController) {
+      body: GetBuilder<UpiBankController>(builder: (upiController) {
         return SafeArea(
           child: Padding(
             padding: AppConstants.screenPadding,

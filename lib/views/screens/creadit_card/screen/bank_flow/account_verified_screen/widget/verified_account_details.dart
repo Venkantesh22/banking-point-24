@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/bank_info_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 
 class VerifiedAccountDetails extends StatelessWidget {
+  final BankInfoModel? bankInfoModel;
   const VerifiedAccountDetails({
     super.key,
+    this.bankInfoModel,
   });
-
-  static const String accountHolderName = 'Rahul Kumar';
-  static const String accountNumber = 'XXXX XXXX 9012';
-  static const String ifscCode = 'HDFC0001234';
-  static const String bankName = 'HDFC Bank';
 
   @override
   Widget build(BuildContext context) {
@@ -42,24 +40,20 @@ class VerifiedAccountDetails extends StatelessWidget {
         children: [
           _VerifiedRow(
             label: 'Account Holder Name',
-            value: accountHolderName,
+            value: bankInfoModel?.accountHolderName ?? "-",
           ),
-
           _VerifiedRow(
             label: 'Account Number',
-            value: accountNumber,
+            value: bankInfoModel?.maskedAccount ?? "-",
           ),
-
           _VerifiedRow(
             label: 'IFSC Code',
-            value: ifscCode,
+            value: bankInfoModel?.ifsc ?? "-",
           ),
-
           _VerifiedRow(
             label: 'Bank Name',
-            value: bankName,
+            value: bankInfoModel?.bankName ?? "-",
           ),
-
           Padding(
             padding: EdgeInsets.only(top: 10.h),
             child: Container(
@@ -76,16 +70,11 @@ class VerifiedAccountDetails extends StatelessWidget {
                     size: 19.sp,
                     color: const Color(0xFF20A865),
                   ),
-
                   SizedBox(width: 8.w),
-
                   Expanded(
                     child: CustomText(
                       'Bank account verified successfully',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontSize: 11.sp,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF20A865),
@@ -127,9 +116,7 @@ class _VerifiedRow extends StatelessWidget {
                   ),
             ),
           ),
-
           sizedBoxWidth(width: 12),
-
           Flexible(
             child: CustomText(
               value,

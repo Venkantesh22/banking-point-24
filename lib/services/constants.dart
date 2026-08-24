@@ -287,10 +287,13 @@ class AppConstants {
   static const String postMoneyWantCash =
       "api/credit-card-cash-withdrawal/v1/settle-cash";
 
-//
+//* validate bank infor
 
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";
+
+  static const String postValidateBankAccountInfo =
+      "api/credit-card-cash-withdrawal/v1/verify-account";
 
   static String getCreditCardCashWithdrawalTransactionStatus(
           {required String transactionId}) =>

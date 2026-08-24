@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/state_manager.dart';
-import 'package:lekra/controllers/card_money_controller/upi_controller.dart';
+import 'package:lekra/controllers/card_money_controller/upi_bank_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
@@ -30,7 +30,7 @@ class _EnterUpiIdScreenState extends State<EnterUpiIdScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
-        child: GetBuilder<UpiController>(builder: (upiController) {
+        child: GetBuilder<UpiBankController>(builder: (upiController) {
           return Form(
             key: _formKey,
             child: Padding(

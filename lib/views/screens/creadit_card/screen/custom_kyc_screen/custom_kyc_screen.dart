@@ -15,9 +15,14 @@ import 'package:lekra/views/screens/creadit_card/screen/custom_kyc_status_screen
 import 'package:lekra/views/screens/creadit_card/widget/section_title.dart';
 import 'package:lekra/views/screens/widget/text_box/app_text_box.dart';
 
-class CustomKycScreen extends StatelessWidget {
+class CustomKycScreen extends StatefulWidget {
   CustomKycScreen({super.key});
 
+  @override
+  State<CustomKycScreen> createState() => _CustomKycScreenState();
+}
+
+class _CustomKycScreenState extends State<CustomKycScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
