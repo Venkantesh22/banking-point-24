@@ -257,6 +257,9 @@ class AppConstants {
   static const String postCustomerKycMobileCreditCardOTP =
       "api/credit-card-cash-withdrawal/v1/send-kyc-otp";
 
+  static const String postCustomerKycMobileCreditCarVerify =
+      "api/credit-card-cash-withdrawal/v1/verify-kyc-otp";
+
   //* Credit card withdrawal api
 
   static const String postCheckCustomer =

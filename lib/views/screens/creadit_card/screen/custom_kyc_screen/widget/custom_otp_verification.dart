@@ -111,12 +111,21 @@ class CustomerOtpVerificationSection extends StatelessWidget {
                   controller.otp = value;
                   controller.update();
 
-                  final result = await controller.verifyCustomerKycOtp();
-
-                  showToast(
-                    message: result.message,
-                    typeCheck: result.isSuccess,
-                  );
+                  await controller
+                      .customerKycMobileCreditCarVerify()
+                      .then((value) {
+                    if (value.isSuccess) {
+                      showToast(
+                        message: value.message,
+                        typeCheck: value.isSuccess,
+                      );
+                    } else {
+                      showToast(
+                        message: value.message,
+                        typeCheck: value.isSuccess,
+                      );
+                    }
+                  });
                 },
               ),
               sizedBoxHeight(height: 10),

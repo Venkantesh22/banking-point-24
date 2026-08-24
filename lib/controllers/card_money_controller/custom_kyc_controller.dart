@@ -514,8 +514,8 @@ class CustomKycController extends GetxController implements GetxService {
     return responseModel;
   }
 
-  Future<ResponseModel> verifyCustomerKycOtp() async {
-    log('----------- verifyCustomerKycOtp Called ----------');
+  Future<ResponseModel> customerKycMobileCreditCarVerify() async {
+    log('----------- customerKycMobileCreditCarVerify Called ----------');
 
     if (otp.length != 6) {
       return ResponseModel(
@@ -537,7 +537,7 @@ class CustomKycController extends GetxController implements GetxService {
       };
 
       final Response response =
-          await customKycRepo.customerKycMobileCreditCardOTP(
+          await customKycRepo.customerKycMobileCreditCarVerify(
         data: FormData(data),
       );
 
@@ -562,7 +562,7 @@ class CustomKycController extends GetxController implements GetxService {
 
       return ResponseModel(
         false,
-        response.body['message']?.toString() ?? 'OTP verification failed',
+        response.body['message']?.toString() ?? 'OTP customerKycMobileCreditCarVerify failed',
       );
     } catch (e, stackTrace) {
       log(

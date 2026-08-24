@@ -21,12 +21,20 @@ class CustomKycRepo {
         "cardWithdrawalCustomerKYC",
         data,
       );
-      
+
   Future<Response> customerKycMobileCreditCardOTP(
           {required FormData data}) async =>
       await apiClient.postData(
         AppConstants.postCustomerKycMobileCreditCardOTP,
         "customerKycMobileCreditCardOTP",
+        data,
+      );
+
+  Future<Response> customerKycMobileCreditCarVerify(
+          {required FormData data}) async =>
+      await apiClient.postData(
+        AppConstants.postCustomerKycMobileCreditCarVerify,
+        "customerKycMobileCreditCarVerify",
         data,
       );
 
