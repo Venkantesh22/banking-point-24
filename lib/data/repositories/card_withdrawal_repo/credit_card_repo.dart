@@ -15,8 +15,6 @@ class CreditCardRepo {
         data,
       );
 
-  //
-
   Future<Response> resendCreditCardOTP({required FormData data}) async =>
       await apiClient.postData(
         AppConstants.postResendCreditCardOTP,
@@ -43,5 +41,11 @@ class CreditCardRepo {
         AppConstants.postMoneyWantCash,
         "moneyWantCash",
         data,
+      );
+
+  Future<Response> fetchCreditCardCharges() async =>
+      await apiClient.getData(
+        AppConstants.getCreditCardCharges,
+        "getCreditCardCharges",
       );
 }

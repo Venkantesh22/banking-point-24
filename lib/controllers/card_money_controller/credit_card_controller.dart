@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/withdrawal_model.dart';
 import 'package:lekra/data/models/response/response_model.dart';
@@ -387,6 +388,44 @@ class CreditCardController extends GetxController implements GetxService {
     } catch (e) {
       log('ERROR AT moneyWantCash(): $e');
       responseModel = ResponseModel(false, "Error while moneyWantCash user $e");
+    }
+
+    isLoading = false;
+    update();
+    return responseModel;
+  }
+
+  List<CreditCardChargesModel> creditCardChargesModelList = [];
+  Future<ResponseModel> fetchCreditCardCharges() async {
+    log('----------- fetchCreditCardCharges Called ----------');
+
+    ResponseModel responseModel;
+
+    isLoading = true;
+    update();
+
+    try {
+      Response response = await creditCardRepo.fetchCreditCardCharges();
+
+      if (response.statusCode == 200 && response.body['success'] == true) {
+        creditCardChargesModelList = (response.body['data'] as List)
+            .map(
+              (e) => CreditCardChargesModel.fromJson(
+                Map<String, dynamic>.from(e),
+              ),
+            )
+            .toList();
+
+        responseModel = ResponseModel(true,
+            response.body['message'] ?? " fetchCreditCardCharges success");
+      } else {
+        responseModel = ResponseModel(false,
+            response.body['message'] ?? "Error while fetchCreditCardCharges");
+      }
+    } catch (e) {
+      log('ERROR AT fetchCreditCardCharges(): $e');
+      responseModel =
+          ResponseModel(false, "Error while fetchCreditCardCharges user $e");
     }
 
     isLoading = false;

@@ -13,12 +13,25 @@ import 'package:lekra/views/screens/creadit_card/screen/withdraw_money_screen/wi
 import 'package:lekra/views/screens/creadit_card/screen/withdraw_verify_otp_screen/withdraw_verify_otp_screen.dart';
 import 'package:lekra/views/screens/widget/text_box/app_text_box.dart';
 
-class WithdrawMoneyScreen extends StatelessWidget {
+class WithdrawMoneyScreen extends StatefulWidget {
   WithdrawMoneyScreen({
     super.key,
   });
 
+  @override
+  State<WithdrawMoneyScreen> createState() => _WithdrawMoneyScreenState();
+}
+
+class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<CreditCardController>().fetchCreditCardCharges();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +42,27 @@ class WithdrawMoneyScreen extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: white,
             elevation: 0,
-            centerTitle: true,
-            iconTheme: const IconThemeData(
-              color: Colors.black,
-            ),
-            title: CustomText(
-              'Withdraw Money',
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF101B5C),
-              ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomText(
+                  'Withdraw Money',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF101B5C),
+                  ),
+                ),
+                sizedBoxHeight(height: 4.h),
+                CustomText(
+                  'Enter amount and card details',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: greyDark,
+                  ),
+                ),
+              ],
             ),
           ),
           body: SafeArea(
@@ -50,20 +73,6 @@ class WithdrawMoneyScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: CustomText(
-                        'Enter amount and card details',
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          color: greyDark,
-                        ),
-                      ),
-                    ),
-
-                    sizedBoxHeight(
-                      height: 18,
-                    ),
-
                     // ==================================================
                     // WITHDRAW AMOUNT
                     // ==================================================
@@ -184,139 +193,150 @@ class _WithdrawAmountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: const Color(0xFFE5E9F2),
+    return GetBuilder<CreditCardController>(builder: (creditCardController) {
+      final charges = creditCardController.creditCardChargesModelList;
+
+      final minAmount = charges.isNotEmpty ? charges.first.minAmount : null;
+
+      final maxAmount = charges.isNotEmpty ? charges.first.maxAmount : null;
+      final processingFee =
+          charges.isNotEmpty ? charges.first.chargeValue : null;
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: const Color(0xFFE5E9F2),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            'Enter Withdraw Amount',
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w700,
-              color: black,
-            ),
-          ),
-          sizedBoxHeight(
-            height: 8,
-          ),
-          AppTextFieldWithHeading(
-            controller: controller.amountController,
-            hindText: '0.00',
-            prefixText: '₹  ',
-            prefixStyle: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: primaryColor,
-            ),
-            keyboardType: const TextInputType.numberWithOptions(
-              decimal: true,
-            ),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                RegExp(r'^\d*\.?\d{0,2}'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              'Enter Withdraw Amount',
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+                color: black,
               ),
-            ],
-            bgColor: white,
-            borderColor: primaryColor,
-            borderWidth: 1,
-            borderRadius: 8,
-            onChanged: (_) {
-              controller.calculateAmount();
-            },
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter withdrawal amount';
-              }
-
-              final double? amount = double.tryParse(
-                value.trim(),
-              );
-
-              if (amount == null) {
-                return 'Please enter a valid amount';
-              }
-
-              if (amount < controller.minimumAmount) {
-                return 'Minimum amount is ₹${controller.minimumAmount.toStringAsFixed(0)}';
-              }
-
-              if (amount > controller.maximumAmount) {
-                return 'Maximum amount is ₹${controller.maximumAmount.toStringAsFixed(0)}';
-              }
-
-              if (amount > controller.availableLimit) {
-                return 'Amount exceeds available limit';
-              }
-
-              return null;
-            },
-          ),
-          sizedBoxHeight(
-            height: 12,
-          ),
-          _amountRow(
-            'Min. Amount',
-            '₹1,000',
-          ),
-          _amountRow(
-            'Max. Amount',
-            '₹1,00,000',
-          ),
-          _amountRow(
-            'Available Limit',
-            '₹1,50,000',
-          ),
-          _amountRow(
-            'Processing Fee',
-            '2.00% + GST',
-          ),
-          sizedBoxHeight(
-            height: 6,
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 10.h,
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1F6FF),
-              borderRadius: BorderRadius.circular(8.r),
+            sizedBoxHeight(
+              height: 8,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomText(
-                  'You Will Get',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: primaryColor,
-                  ),
-                ),
-                CustomText(
-                  '₹${controller.willGet.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF101B5C),
-                  ),
+            AppTextFieldWithHeading(
+              controller: controller.amountController,
+              hindText: '0.00',
+              prefixText: '₹  ',
+              prefixStyle: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: primaryColor,
+              ),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d*\.?\d{0,2}'),
                 ),
               ],
+              bgColor: white,
+              borderColor: primaryColor,
+              borderWidth: 1,
+              borderRadius: 8,
+              onChanged: (_) {
+                controller.calculateAmount();
+              },
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter withdrawal amount';
+                }
+
+                final double? amount = double.tryParse(
+                  value.trim(),
+                );
+
+                if (amount == null) {
+                  return 'Please enter a valid amount';
+                }
+
+                if (amount < controller.minimumAmount) {
+                  return 'Minimum amount is ₹${controller.minimumAmount.toStringAsFixed(0)}';
+                }
+
+                if (amount > controller.maximumAmount) {
+                  return 'Maximum amount is ₹${controller.maximumAmount.toStringAsFixed(0)}';
+                }
+
+                if (amount > controller.availableLimit) {
+                  return 'Amount exceeds available limit';
+                }
+
+                return null;
+              },
             ),
-          ),
-        ],
-      ),
-    );
+            sizedBoxHeight(
+              height: 12,
+            ),
+            _amountRow(
+              'Min. Amount',
+              minAmount?.toString() ?? '-',
+            ),
+            _amountRow(
+              'Max. Amount',
+              maxAmount?.toString() ?? '-',
+            ),
+            _amountRow(
+              'Available Limit',
+              '₹1,50,000',
+            ),
+            _amountRow(
+              'Processing Fee',
+              charges.first.isPercent
+                  ? '$processingFee.00% + GST'
+                  : "$processingFee flat + GST",
+            ),
+            sizedBoxHeight(
+              height: 6,
+            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.w,
+                vertical: 10.h,
+              ),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F6FF),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(
+                    'You Will Get',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: primaryColor,
+                    ),
+                  ),
+                  CustomText(
+                    '₹${controller.willGet.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF101B5C),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _amountRow(

@@ -294,7 +294,11 @@ class AppConstants {
 
   static const String postValidateBankAccountInfo =
       "api/credit-card-cash-withdrawal/v1/verify-account";
-  //
+
+//* Credit card charges
+
+  static const String getCreditCardCharges =
+      "api/credit-card-cash-withdrawal/v1/charges-list";
 
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";
