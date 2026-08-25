@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/cash_card_withdrawal_kyc_status_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/check_custom_kyc_model.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/data/models/response/response_model.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/custom_kyc_repo.dart';
 import 'package:lekra/services/constants.dart';
@@ -616,6 +617,13 @@ class CustomKycController extends GetxController implements GetxService {
     return responseModel;
   }
 
+  String? transactionId;
+
+  void selectTransaction({required String transactionId}) {
+    this.transactionId = transactionId;
+    update();
+  }
+
   //* check a Credit card withdrawal transaction status creditCardCashWithdrawalTransactionStatus()
   Future<ResponseModel> creditCardCashWithdrawalTransactionStatus(
       {required String? transactionId}) async {
@@ -626,10 +634,9 @@ class CustomKycController extends GetxController implements GetxService {
     update();
 
     try {
-      String transactionId = "";
       Response response =
           await customKycRepo.creditCardCashWithdrawalTransactionStatus(
-              transactionId: transactionId);
+              transactionId: transactionId ?? "");
 
       if (response.statusCode == 200 && response.body['status'] == "success") {
         responseModel = ResponseModel(

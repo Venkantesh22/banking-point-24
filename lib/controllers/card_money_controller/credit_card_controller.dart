@@ -493,40 +493,40 @@ class CreditCardController extends GetxController implements GetxService {
   }
 
   // //* Call request and resend opt credit card fetchCreditCardTransactionList()
-  // Future<ResponseModel> fetchCreditCardTransactionList() async {
-  //   log('----------- fetchCreditCardTransactionList Called ----------');
+  Future<ResponseModel> fetchCreditCardTransactionList() async {
+    log('----------- fetchCreditCardTransactionList Called ----------');
 
-  //   ResponseModel responseModel;
-  //   isLoading = true;
-  //   update();
+    ResponseModel responseModel;
+    isLoading = true;
+    update();
 
-  //   try {
-  //     final sessionId =
-  //         sharedPreferences.getString(AppConstants.apiToken) ?? '';
+    try {
+      final sessionId =
+          sharedPreferences.getString(AppConstants.apiToken) ?? '';
 
-  //     Response response = await creditCardRepo.fetchCreditCardTransactionList();
+      Response response = await creditCardRepo.fetchCreditCardTransactionList();
 
-  //     if (response.statusCode == 200 && response.body['status'] == "success") {
-  //       responseModel = ResponseModel(
-  //           true,
-  //           response.body['message'] ??
-  //               " fetchCreditCardTransactionList success");
-  //     } else {
-  //       responseModel = ResponseModel(
-  //           false,
-  //           response.body['message'] ??
-  //               "Error while fetchCreditCardTransactionList");
-  //     }
-  //   } catch (e) {
-  //     log('ERROR AT fetchCreditCardTransactionList(): $e');
-  //     responseModel = ResponseModel(
-  //         false, "Error while fetchCreditCardTransactionList user $e");
-  //   }
+      if (response.statusCode == 200 && response.body['status'] == "success") {
+        responseModel = ResponseModel(
+            true,
+            response.body['message'] ??
+                " fetchCreditCardTransactionList success");
+      } else {
+        responseModel = ResponseModel(
+            false,
+            response.body['message'] ??
+                "Error while fetchCreditCardTransactionList");
+      }
+    } catch (e) {
+      log('ERROR AT fetchCreditCardTransactionList(): $e');
+      responseModel = ResponseModel(
+          false, "Error while fetchCreditCardTransactionList user $e");
+    }
 
-  //   isLoading = false;
-  //   update();
-  //   return responseModel;
-  // }
+    isLoading = false;
+    update();
+    return responseModel;
+  }
 
   // ============================================================
   // CLEAR

@@ -55,9 +55,9 @@ class CreditCardRepo {
         data,
       );
 
-  // Future<Response> fetchCreditCardTransactionList() async =>
-  //     await apiClient.getData(
-  //       AppConstants.getCreditCardTransactionList,
-  //       "fetchCreditCardTransactionList",
-  //     );
+  Future<Response> fetchCreditCardTransactionList() async =>
+      await apiClient.getData(
+        AppConstants.getCreditCardTransactionList,
+        "fetchCreditCardTransactionList",
+      );
 }

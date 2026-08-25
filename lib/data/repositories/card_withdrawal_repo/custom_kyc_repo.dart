@@ -38,8 +38,6 @@ class CustomKycRepo {
         data,
       );
 
-  
-
   //
 
   Future<Response> confirmAndTransaction({required FormData data}) async =>
@@ -48,6 +46,8 @@ class CustomKycRepo {
         "confirmAndTransaction",
         data,
       );
+
+  
 
   Future<Response> creditCardCashWithdrawalTransactionStatus(
           {required String transactionId}) async =>

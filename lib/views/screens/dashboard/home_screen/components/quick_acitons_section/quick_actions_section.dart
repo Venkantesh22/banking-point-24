@@ -9,6 +9,7 @@ import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/date_formatters_and_converters.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/screens/creadit_card/screen/check_custom_kyc/check_custom_kyc_screen.dart';
+import 'package:lekra/views/screens/creadit_card/screen/credit_card_transaction_list_screen/credit_card_transaction_list_screen.dart';
 import 'package:lekra/views/screens/pos_machine/connect_pos_device/connect_pos_device_screen/connect_pos_device_screen.dart';
 import 'package:lekra/views/screens/transcation_history/transaction_history_screen.dart';
 
@@ -43,12 +44,17 @@ class QuickActionsSection extends StatelessWidget {
         backgroundColor: const Color(0xFFEEF5FF),
         onTap: () {
           // Get.find<CreditCardController>().fetchCreditCardTransactionList();
+          // navigate(
+          //   context: context,
+          //   page:
+          //    TransactionHistoryScreen(
+          //     fromDateValue: DateTime(2024, 1, 1),
+          //     todateValue: getDateTime(),
+          //   ),
+          // );
           navigate(
             context: context,
-            page: TransactionHistoryScreen(
-              fromDateValue: DateTime(2024, 1, 1),
-              todateValue: getDateTime(),
-            ),
+            page: CreditCardTransactionListScreen(),
           );
         },
       ),

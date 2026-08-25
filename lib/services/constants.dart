@@ -277,8 +277,6 @@ class AppConstants {
   static const String postResendCreditCardOTP =
       "api/credit-card-cash-withdrawal/v1/resend-otp";
 
-
-
 //* UPI flow Api
 
   static const String postValidateCustomerUPI =
@@ -307,6 +305,9 @@ class AppConstants {
 
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";
+
+  static const String getCreditCardTransactionList =
+      "api/credit-card-cash-withdrawal/v1/reports";
 
   static String getCreditCardCashWithdrawalTransactionStatus(
           {required String transactionId}) =>
