@@ -624,42 +624,6 @@ class CustomKycController extends GetxController implements GetxService {
     update();
   }
 
-  //* check a Credit card withdrawal transaction status creditCardCashWithdrawalTransactionStatus()
-  Future<ResponseModel> creditCardCashWithdrawalTransactionStatus(
-      {required String? transactionId}) async {
-    log('----------- creditCardCashWithdrawalTransactionStatus Called ----------');
-
-    ResponseModel responseModel;
-    isLoading = true;
-    update();
-
-    try {
-      Response response =
-          await customKycRepo.creditCardCashWithdrawalTransactionStatus(
-              transactionId: transactionId ?? "");
-
-      if (response.statusCode == 200 && response.body['status'] == "success") {
-        responseModel = ResponseModel(
-            true,
-            response.body['message'] ??
-                " creditCardCashWithdrawalTransactionStatus success");
-      } else {
-        responseModel = ResponseModel(
-            false,
-            response.body?['message'] ??
-                response.statusText ??
-                "Error while creditCardCashWithdrawalTransactionStatus");
-      }
-    } catch (e) {
-      log('ERROR AT creditCardCashWithdrawalTransactionStatus(): $e');
-      responseModel = ResponseModel(false,
-          "Error while creditCardCashWithdrawalTransactionStatus user $e");
-    }
-
-    isLoading = false;
-    update();
-    return responseModel;
-  }
 
   // ============================================================
 // OTP TIMER

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
-import 'package:lekra/controllers/card_money_controller/custom_kyc_controller.dart';
 import 'package:lekra/controllers/report_contoller.dart';
 import 'package:lekra/data/models/transaction_model.dart';
 import 'package:lekra/services/constants.dart';
@@ -23,71 +22,58 @@ class TransactionListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CustomKycController>(builder: (customKycController) {
-      return GetBuilder<ReportController>(builder: (reportController) {
-        return Expanded(
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: EdgeInsets.zero,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: isInitialLoading
-                ? 4
-                : reportController.itemsToShow.length + (isMoreLoading ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (isInitialLoading) {
-                final transactionModel = TransactionModel();
+    return GetBuilder<CreditCardController>(
+      builder: (creditCardController) {
+        return GetBuilder<ReportController>(builder: (reportController) {
+          return Expanded(
+            child: ListView.separated(
+              controller: _scrollController,
+              padding: EdgeInsets.zero,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: isInitialLoading
+                  ? 4
+                  : reportController.itemsToShow.length + (isMoreLoading ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (isInitialLoading) {
+                  final transactionModel = TransactionModel();
+                  return CustomShimmer(
+                      isLoading: true,
+                      child: TransactionRow(transactionModel: transactionModel));
+                }
+        
+                // loader tile at the end when loading more
+                if (isMoreLoading && index == reportController.itemsToShow.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Center(
+                      child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2)),
+                    ),
+                  );
+                }
+        
+                final transaction = reportController.itemsToShow[index];
                 return CustomShimmer(
-                    isLoading: true,
-                    child: TransactionRow(transactionModel: transactionModel));
-              }
-
-              // loader tile at the end when loading more
-              if (isMoreLoading &&
-                  index == reportController.itemsToShow.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: Center(
-                    child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2)),
-                  ),
-                );
-              }
-
-              final transaction = reportController.itemsToShow[index];
-              return CustomShimmer(
-                  isLoading: false,
-                  child: GestureDetector(
-                      onTap: () {
-                        reportController.setTransactionModel(transaction);
-                        customKycController.selectTransaction(
-                            transactionId: transaction.id.toString() ?? "");
-                        customKycController
-                            .creditCardCashWithdrawalTransactionStatus(
-                                transactionId: "")
-                            .then((value) {
-                          if (value.isSuccess) {
-                            navigate(
-                                context: context,
-                                page: 
-                                
-                                TransactionDetailsScreen(
-                                  transactionModel: transaction,
-                                ));
-                          } else {
-                            showToast(
-                                message: value.message,
-                                typeCheck: value.isSuccess);
-                          }
-                        });
-                      },
-                      child: TransactionRow(transactionModel: transaction)));
-            },
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-          ),
-        );
-      });
-    });
+                    isLoading: false,
+                    child: GestureDetector(
+                        onTap: () {
+                          reportController.setTransactionModel(transaction);
+                          
+                          navigate(
+                              context: context,
+                              page: TransactionDetailsScreen(
+                                transactionModel: transaction,
+                              ));
+                        },
+                        child: TransactionRow(transactionModel: transaction)));
+              },
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+            ),
+          );
+        });
+      }
+    );
   }
 }

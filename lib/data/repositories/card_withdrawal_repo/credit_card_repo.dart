@@ -55,9 +55,31 @@ class CreditCardRepo {
         data,
       );
 
-  Future<Response> fetchCreditCardTransactionList() async =>
-      await apiClient.getData(
+  
+
+  Future<Response> fetchCreditCardTransactionList({
+    required int page,
+    required int limit,
+    required String fromdate,
+    required String todate,
+  }) async =>
+      await apiClient.postData(
         AppConstants.getCreditCardTransactionList,
         "fetchCreditCardTransactionList",
+        FormData({
+          "page": page,
+          "limit": limit,
+          "fromdate": fromdate,
+          "todate": todate,
+        }),
+      );
+
+
+        Future<Response> creditCardCashWithdrawalTransactionDetails(
+          {required String transactionId}) async =>
+      await apiClient.getData(
+        AppConstants.getCreditCardCashWithdrawalTransactionStatus(
+            transactionId: transactionId),
+        "creditCardCashWithdrawalTransactionDetails",
       );
 }
