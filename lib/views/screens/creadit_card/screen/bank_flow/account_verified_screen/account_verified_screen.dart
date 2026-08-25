@@ -54,11 +54,6 @@ class AccountVerifiedScreen extends StatelessWidget {
                     title: 'Proceed to Confirm',
                     type: ButtonType.primary,
                     onTap: () {
-                      // creditCardController.sendMoneyToUPIOrBank(
-                      //     isUpi: false,
-                      //     upiId: upiId,
-                      //     recipientName: recipientName);
-
                       navigate(context: context, page: BankConfirmPayScreen());
                     },
                     height: 52.h,

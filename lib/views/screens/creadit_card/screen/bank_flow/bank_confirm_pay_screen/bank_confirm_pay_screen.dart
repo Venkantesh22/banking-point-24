@@ -38,7 +38,13 @@ class BankConfirmPayScreen extends StatelessWidget {
                       children: [
                         const BankCustomerDetails(),
                         sizedBoxHeight(height: 16),
-                        const BankPaymentDetails(),
+                        GetBuilder<CreditCardController>(
+                            builder: (creditCardController) {
+                          return BankPaymentDetails(
+                            transaction:
+                                creditCardController.initiationWithdrawalModel,
+                          );
+                        }),
                         sizedBoxHeight(height: 22),
                       ],
                     ),

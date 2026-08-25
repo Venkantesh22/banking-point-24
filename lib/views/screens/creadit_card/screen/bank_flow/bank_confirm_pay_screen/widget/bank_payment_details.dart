@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/initiation_withdrawal_model.dart';
+import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 
 class BankPaymentDetails extends StatelessWidget {
   const BankPaymentDetails({
     super.key,
+    required this.transaction,
   });
 
-  static const String amount = '₹25,000.00';
-  static const String processingFee = '₹0.00';
-  static const String gst = '₹0.00';
-  static const String totalDebit = '₹25,000.00';
+  final InitiationWithdrawalModel? transaction;
 
   @override
   Widget build(BuildContext context) {
+    final String amount = transaction?.amount ?? '-';
+
+    final String processingFee = transaction?.processingFee ?? '-';
+
+    final String gst = transaction?.gst ?? '-';
+
+    final String totalDebit = transaction?.totalCardDebit ?? '-';
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
@@ -39,21 +47,20 @@ class BankPaymentDetails extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const _PaymentRow(
-            label: 'Amount',
-            value: amount,
-          ),
-
-          const _PaymentRow(
+          _PaymentRow(
+              label: 'Amount',
+              value: PriceConverter.convertToNumberFormat(
+                  double.tryParse(amount) ?? 0.0)),
+          _PaymentRow(
             label: 'Processing Fee',
-            value: processingFee,
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(processingFee) ?? 0.0),
           ),
-
-          const _PaymentRow(
+          _PaymentRow(
             label: 'GST',
-            value: gst,
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(gst) ?? 0.0),
           ),
-
           Padding(
             padding: EdgeInsets.symmetric(vertical: 12.h),
             child: Divider(
@@ -61,11 +68,11 @@ class BankPaymentDetails extends StatelessWidget {
               color: greyBorder,
             ),
           ),
-
-          const _PaymentRow(
+          _PaymentRow(
             label: 'Total Debit',
-            value: totalDebit,
-            valueColor: Color(0xFF20A865),
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(totalDebit) ?? 0.0),
+            valueColor: const Color(0xFF20A865),
             valueFontWeight: FontWeight.w700,
           ),
         ],
@@ -102,7 +109,6 @@ class _PaymentRow extends StatelessWidget {
                   ),
             ),
           ),
-
           CustomText(
             value,
             textAlign: TextAlign.right,
