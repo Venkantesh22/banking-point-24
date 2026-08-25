@@ -29,7 +29,14 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<CreditCardController>().fetchCreditCardCharges();
+      final controller = Get.find<CreditCardController>();
+      controller.fetchCreditCardCharges();
+      controller.amountController.clear();
+      controller.cardNumberController.clear();
+      controller.expiryDateController.clear();
+      controller.cvvController.clear();
+      controller.cardHolderNameController.clear();
+      controller.bankNameController.clear();
     });
   }
 

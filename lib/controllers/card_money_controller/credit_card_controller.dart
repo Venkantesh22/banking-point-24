@@ -28,18 +28,15 @@ class CreditCardController extends GetxController implements GetxService {
 
   final TextEditingController amountController = TextEditingController();
 
-  final TextEditingController cardNumberController =
-      TextEditingController();
+  final TextEditingController cardNumberController = TextEditingController();
 
   final TextEditingController expiryDateController = TextEditingController();
 
-  final TextEditingController cvvController =
-      TextEditingController();
+  final TextEditingController cvvController = TextEditingController();
 
   final TextEditingController cardHolderNameController =
       TextEditingController();
-  final TextEditingController bankNameController =
-      TextEditingController();
+  final TextEditingController bankNameController = TextEditingController();
 
   final List<TextEditingController> otpControllers = List.generate(
     6,
@@ -307,7 +304,6 @@ class CreditCardController extends GetxController implements GetxService {
           await creditCardRepo.sendMoneyToUPIOrBank(data: FormData(data));
 
       if (response.statusCode == 200 && response.body['success'] == true) {
-
         creditCardTransactionModel =
             CreditCardTransactionModel.fromJson(response.body['data']);
 
