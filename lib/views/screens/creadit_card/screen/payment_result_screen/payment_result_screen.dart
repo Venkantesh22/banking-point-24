@@ -69,6 +69,9 @@ class PaymentResultScreen extends StatelessWidget {
                 sizedBoxHeight(height: 24),
                 PaymentResultAction(
                   status: status,
+                  // transaction:
+                  //     creditCardController.creditCardTransactionModel ??
+                  //         CreditCardTransactionModel(),
                 ),
               ],
             ),

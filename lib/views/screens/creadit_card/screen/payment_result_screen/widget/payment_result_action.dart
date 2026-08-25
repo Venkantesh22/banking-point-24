@@ -22,75 +22,75 @@ class PaymentResultAction extends StatelessWidget {
       case PaymentStatus.successful:
         return Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    type: ButtonType.secondary,
-                    onTap: () {
-                      debugPrint('Share receipt');
-                    },
-                    height: 50.h,
-                    radius: 14.r,
-                    borderColor: primaryColor,
-                    borderWidth: 1,
-                    color: white,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.share_outlined,
-                          size: 19.sp,
-                          color: primaryColor,
-                        ),
-                        SizedBox(width: 7.w),
-                        Text(
-                          'Share',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: primaryColor,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: CustomButton(
-                    type: ButtonType.primary,
-                    onTap: () {
-                      debugPrint('Download receipt');
-                    },
-                    height: 50.h,
-                    radius: 14.r,
-                    borderWidth: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.download_outlined,
-                          size: 19.sp,
-                          color: white,
-                        ),
-                        SizedBox(width: 7.w),
-                        Text(
-                          'Receipt',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: white,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: CustomButton(
+            //         type: ButtonType.secondary,
+            //         onTap: () {
+            //           debugPrint('Share receipt');
+            //         },
+            //         height: 50.h,
+            //         radius: 14.r,
+            //         borderColor: primaryColor,
+            //         borderWidth: 1,
+            //         color: white,
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             Icon(
+            //               Icons.share_outlined,
+            //               size: 19.sp,
+            //               color: primaryColor,
+            //             ),
+            //             SizedBox(width: 7.w),
+            //             Text(
+            //               'Share',
+            //               style:
+            //                   Theme.of(context).textTheme.bodyMedium?.copyWith(
+            //                         fontSize: 13.sp,
+            //                         fontWeight: FontWeight.w600,
+            //                         color: primaryColor,
+            //                       ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(width: 12.w),
+            //     Expanded(
+            //       child: CustomButton(
+            //         type: ButtonType.primary,
+            //         onTap: () {
+            //           debugPrint('Download receipt');
+            //         },
+            //         height: 50.h,
+            //         radius: 14.r,
+            //         borderWidth: 0,
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             Icon(
+            //               Icons.download_outlined,
+            //               size: 19.sp,
+            //               color: white,
+            //             ),
+            //             SizedBox(width: 7.w),
+            //             Text(
+            //               'Receipt',
+            //               style:
+            //                   Theme.of(context).textTheme.bodyMedium?.copyWith(
+            //                         fontSize: 13.sp,
+            //                         fontWeight: FontWeight.w600,
+            //                         color: white,
+            //                       ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             sizedBoxHeight(height: 12),
             _dashboardButton(context),
           ],

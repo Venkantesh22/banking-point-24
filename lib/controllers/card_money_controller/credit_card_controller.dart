@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/bank_tranfet_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/cal_real_time_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
@@ -307,8 +308,10 @@ class CreditCardController extends GetxController implements GetxService {
           await creditCardRepo.sendMoneyToUPIOrBank(data: FormData(data));
 
       if (response.statusCode == 200 && response.body['success'] == true) {
+
         creditCardTransactionModel =
             CreditCardTransactionModel.fromJson(response.body['data']);
+
         responseModel = ResponseModel(
             true, response.body['message'] ?? " sendMoneyToUPIOrBank success");
       } else {

@@ -11,6 +11,7 @@ import 'package:lekra/views/screens/creadit_card/screen/bank_flow/bank_confirm_p
 import 'package:lekra/views/screens/creadit_card/screen/bank_flow/bank_confirm_pay_screen/widget/bank_payment_details.dart';
 import 'package:lekra/views/screens/creadit_card/screen/bank_flow/bank_confirm_pay_screen/widget/bank_secure_message.dart';
 import 'package:lekra/views/screens/creadit_card/screen/bank_flow/bank_payment_result_screen/bank_payment_result_screen.dart';
+import 'package:lekra/views/screens/creadit_card/screen/payment_result_screen/payment_result_screen.dart';
 
 class BankConfirmPayScreen extends StatelessWidget {
   const BankConfirmPayScreen({
@@ -77,10 +78,7 @@ class BankConfirmPayScreen extends StatelessWidget {
                               message: value.message,
                               typeCheck: value.isSuccess);
                           navigate(
-                              context: context,
-                              page: BankPaymentResultScreen(
-                                status: BankPaymentStatus.pending,
-                              ));
+                              context: context, page: PaymentResultScreen());
                         } else {
                           showToast(
                               message: value.message,

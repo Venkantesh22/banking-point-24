@@ -73,19 +73,22 @@ class PaymentResultDetails extends StatelessWidget {
         children: [
           _DetailRow(
             label: 'Amount',
-            value: transaction.amount ?? '-',
+            value: PriceConverter.convertToNumberFormat(
+                    double.tryParse(transaction.amount ?? "") ?? 0.0) ??
+                '-',
           ),
-
           _DetailRow(
             label: 'Processing Fee',
-            value: transaction.processingFee ?? '-',
+            value: PriceConverter.convertToNumberFormat(
+                    double.tryParse(transaction.processingFee ?? "") ?? 0.0) ??
+                '-',
           ),
-
           _DetailRow(
             label: 'GST',
-            value: transaction.gst ?? '-',
+            value: PriceConverter.convertToNumberFormat(
+                    double.tryParse(transaction.gst ?? "") ?? 0.0) ??
+                '-',
           ),
-
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Divider(
@@ -93,19 +96,17 @@ class PaymentResultDetails extends StatelessWidget {
               height: 1,
             ),
           ),
-
           _DetailRow(
             label: 'Total Debit',
-            value: transaction.totalDebit ??
-                transaction.totalDebitAmount ??
+            value: PriceConverter.convertToNumberFormat(double.tryParse(
+                        transaction.totalDebit ??
+                            transaction.totalDebitAmount ??
+                            "") ??
+                    0.0) ??
                 '-',
-            valueColor:
-                status == PaymentStatus.cancelled
-                    ? red
-                    : textPrimary,
+            valueColor: status == PaymentStatus.cancelled ? red : textPrimary,
             valueFontWeight: FontWeight.w700,
           ),
-
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Divider(
@@ -113,46 +114,35 @@ class PaymentResultDetails extends StatelessWidget {
               height: 1,
             ),
           ),
-
           _DetailRow(
             label: 'Customer',
-            value: transaction.customerName ??
-                transaction.recipientName ??
-                '-',
+            value: transaction.customerName ?? transaction.recipientName ?? '-',
           ),
-
           _DetailRow(
             label: 'Bank',
             value: transaction.bankName ?? '-',
           ),
-
           _DetailRow(
             label: 'Destination',
             value: transaction.destination ?? '-',
           ),
-
           _DetailRow(
             label: 'Settlement Type',
             value: transaction.settlementType ?? '-',
           ),
-
           _DetailRow(
             label: 'Transaction ID',
             value: transaction.transactionId ?? '-',
           ),
-
-          if (transaction.utr != null &&
-              transaction.utr!.trim().isNotEmpty)
+          if (transaction.utr != null && transaction.utr!.trim().isNotEmpty)
             _DetailRow(
               label: 'UTR',
               value: transaction.utr!,
             ),
-
           _DetailRow(
             label: 'Date & Time',
             value: transaction.dateTime ?? '-',
           ),
-
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Row(
@@ -160,10 +150,7 @@ class PaymentResultDetails extends StatelessWidget {
                 Expanded(
                   child: CustomText(
                     'Status',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 13.sp,
                           color: textSecondary,
                         ),
@@ -180,10 +167,7 @@ class PaymentResultDetails extends StatelessWidget {
                   ),
                   child: CustomText(
                     statusText,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                           color: statusColor,
@@ -222,10 +206,7 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: CustomText(
               label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 13.sp,
                     color: textSecondary,
                   ),
@@ -236,10 +217,7 @@ class _DetailRow extends StatelessWidget {
             child: CustomText(
               value,
               textAlign: TextAlign.right,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 13.sp,
                     fontWeight: valueFontWeight,
                     color: valueColor ?? textPrimary,
