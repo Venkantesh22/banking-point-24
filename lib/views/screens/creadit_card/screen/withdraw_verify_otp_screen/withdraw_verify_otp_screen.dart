@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:pinput/pinput.dart';
 
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/services/constants.dart';
@@ -19,7 +20,8 @@ class WithdrawVerifyOtpScreen extends StatefulWidget {
       _WithdrawVerifyOtpScreenState();
 }
 
-class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
+class _WithdrawVerifyOtpScreenState
+    extends State<WithdrawVerifyOtpScreen> {
   @override
   void initState() {
     super.initState();
@@ -33,6 +35,46 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<CreditCardController>(
       builder: (creditCardController) {
+        final defaultPinTheme = PinTheme(
+          width: 48.w,
+          height: 52.h,
+          textStyle: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w700,
+            color: black,
+          ),
+          decoration: BoxDecoration(
+            color: white,
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: grey.withValues(alpha: 0.4),
+              width: 1,
+            ),
+          ),
+        );
+
+        final focusedPinTheme = defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            color: white,
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: primaryColor,
+              width: 1.5,
+            ),
+          ),
+        );
+
+        final submittedPinTheme = defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            color: primaryColor.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: primaryColor,
+              width: 1,
+            ),
+          ),
+        );
+
         return Scaffold(
           backgroundColor: white,
           appBar: AppBar(
@@ -56,19 +98,11 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
               ),
               child: Column(
                 children: [
-                  sizedBoxHeight(
-                    height: 20,
-                  ),
+                  sizedBoxHeight(height: 20),
 
-                  // ==================================================
-                  // SECURITY ICON
-                  // ==================================================
+                  const _SecurityIcon(),
 
-                  _SecurityIcon(),
-
-                  sizedBoxHeight(
-                    height: 24,
-                  ),
+                  sizedBoxHeight(height: 24),
 
                   CustomText(
                     'Enter OTP',
@@ -79,9 +113,7 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                     ),
                   ),
 
-                  sizedBoxHeight(
-                    height: 8,
-                  ),
+                  sizedBoxHeight(height: 8),
 
                   CustomText(
                     'We have sent a 6-digit OTP to',
@@ -92,9 +124,7 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                     ),
                   ),
 
-                  sizedBoxHeight(
-                    height: 4,
-                  ),
+                  sizedBoxHeight(height: 4),
 
                   CustomText(
                     '+91 98765 43210',
@@ -105,84 +135,88 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                     ),
                   ),
 
-                  sizedBoxHeight(
-                    height: 30,
-                  ),
+                  sizedBoxHeight(height: 30),
 
                   // ==================================================
-                  // OTP
+                  // PINPUT OTP
                   // ==================================================
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(
-                      6,
-                      (index) {
-                        return SizedBox(
-                          width: 60.w,
-                          height: 60.h,
-                          child: TextField(
-                            controller:
-                                creditCardController.otpControllers[index],
-                            keyboardType: TextInputType.number,
-                            maxLength: 1,
-                            textAlign: TextAlign.center,
-                            onChanged: (value) {
-                              creditCardController.updateOtp();
+                  Pinput(
+                    length: 6,
+                    keyboardType: TextInputType.number,
+                    controller: creditCardController.otpPinputController,
+                    focusNode: creditCardController.otpFocusNode,
 
-                              if (value.isNotEmpty && index < 5) {
-                                FocusScope.of(
-                                  context,
-                                ).nextFocus();
-                              }
-                            },
-                            decoration: InputDecoration(
-                              counterText: '',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  8.r,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    defaultPinTheme: defaultPinTheme,
+                    focusedPinTheme: focusedPinTheme,
+                    submittedPinTheme: submittedPinTheme,
+
+                    showCursor: true,
+                    autofocus: true,
+
+                    inputFormatters: const [],
+
+                    onChanged: (value) {
+                      creditCardController.otp = value;
+                      creditCardController.isOtpVerified =
+                          value.length == 6;
+
+                      creditCardController.update();
+                    },
+
+                    onCompleted: (value) {
+                      creditCardController.otp = value;
+                      creditCardController.isOtpVerified = true;
+                      creditCardController.update();
+                    },
                   ),
 
-                  sizedBoxHeight(
-                    height: 24,
-                  ),
+                  sizedBoxHeight(height: 24),
+
+                  // ==================================================
+                  // TIMER / RESEND
+                  // ==================================================
 
                   CustomText(
-                    
                     creditCardController.canResendOtp
                         ? 'Didn’t receive OTP?'
-                        : 'Resend OTP in ${creditCardController.otpTimerText}',
+                        : 'Resend OTP in '
+                            '${creditCardController.otpTimerText}',
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: greyDark,
                     ),
                   ),
+
                   if (creditCardController.canResendOtp) ...[
                     sizedBoxHeight(height: 10),
+
                     TextButton(
-                      onPressed: () {
-                        creditCardController
-                            .resendCreditCardOTP()
-                            .then((value) {
-                          if (value.isSuccess) {
-                            showToast(
-                                message: value.message,
-                                typeCheck: value.isSuccess);
-                            creditCardController.resendOtp;
-                          } else {
-                            showToast(
-                                message: value.message,
-                                typeCheck: value.isSuccess);
-                          }
-                        });
-                      },
+                      onPressed: creditCardController.isLoading
+                          ? null
+                          : () async {
+                              final result =
+                                  await creditCardController
+                                      .resendCreditCardOTP();
+
+                              if (result.isSuccess) {
+                                creditCardController
+                                    .clearOtpForPinput();
+
+                                creditCardController
+                                    .startOtpTimer();
+
+                                showToast(
+                                  message: result.message,
+                                  typeCheck: true,
+                                );
+                              } else {
+                                showToast(
+                                  message: result.message,
+                                  typeCheck: false,
+                                );
+                              }
+                            },
                       child: CustomText(
                         'Resend OTP',
                         style: TextStyle(
@@ -194,12 +228,15 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                     ),
                   ],
 
-                  sizedBoxHeight(
-                    height: 35,
-                  ),
+                  sizedBoxHeight(height: 35),
+
+                  // ==================================================
+                  // VERIFY BUTTON
+                  // ==================================================
 
                   CustomButton(
-                    isLoading: creditCardController.isLoading,
+                    isLoading:
+                        creditCardController.isLoading,
                     title: 'Verify OTP',
                     height: 48.h,
                     radius: 8.r,
@@ -209,36 +246,42 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                         secondaryColor,
                       ],
                     ),
-                    onTap: () {
-                      if (!creditCardController.isOtpVerified) {
-                        return showToast(
-                            message: "Enter a valid OTP",
-                            toastType: ToastType.error);
-                      }
+                    onTap: creditCardController.isLoading
+                        ? null
+                        : () async {
+                            if (creditCardController
+                                    .otp.length !=
+                                6) {
+                              showToast(
+                                message:
+                                    'Please enter a valid 6 digit OTP',
+                                toastType: ToastType.error,
+                              );
+                              return;
+                            }
 
-                      creditCardController.creditCardOTPVerify().then((value) {
-                        if (value.isSuccess) {
-                          showToast(
-                              message: value.message,
-                              typeCheck: value.isSuccess);
-                          navigate(
-                              context: context,
-                              page: TransactionSuccessScreen());
-                        } else {
-                          showToast(
-                              message: value.message,
-                              typeCheck: value.isSuccess);
-                        }
-                      });
+                            final result =
+                                await creditCardController
+                                    .creditCardOTPVerify();
 
-                      // API later.
-                      //
-                      // navigate(
-                      //   context: context,
-                      //   page:
-                      //       TransactionSuccessScreen(),
-                      // );
-                    },
+                            if (result.isSuccess) {
+                              showToast(
+                                message: result.message,
+                                typeCheck: true,
+                              );
+
+                              navigate(
+                                context: context,
+                                page:
+                                    const TransactionSuccessScreen(),
+                              );
+                            } else {
+                              showToast(
+                                message: result.message,
+                                typeCheck: false,
+                              );
+                            }
+                          },
                   ),
                 ],
               ),
@@ -255,6 +298,8 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
 // ==================================================================
 
 class _SecurityIcon extends StatelessWidget {
+  const _SecurityIcon();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -272,9 +317,7 @@ class _SecurityIcon extends StatelessWidget {
           height: 80.w,
           decoration: BoxDecoration(
             color: const Color(0xFF0D48C8),
-            borderRadius: BorderRadius.circular(
-              20.r,
-            ),
+            borderRadius: BorderRadius.circular(20.r),
           ),
           child: Icon(
             Icons.lock_outline_rounded,

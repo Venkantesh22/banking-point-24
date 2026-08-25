@@ -45,15 +45,36 @@ class CreditCardController extends GetxController implements GetxService {
     (index) => TextEditingController(),
   );
 
+  final TextEditingController otpPinputController = TextEditingController();
+
+  final FocusNode otpFocusNode = FocusNode();
+
+  void updatePinputOtp() {
+    otp = otpPinputController.text;
+    isOtpVerified = otp.length == 6;
+    update();
+  }
+
+  void clearOtpForPinput() {
+    otpPinputController.clear();
+
+    for (final controller in otpControllers) {
+      controller.clear();
+    }
+
+    otp = '';
+    isOtpVerified = false;
+
+    update();
+  }
+
   // ============================================================
   // WITHDRAWAL DATA
   // ============================================================
 
   bool isLoading = false;
 
-  
   // ============================================================
-
 
   bool isOtpVerified = false;
 
@@ -395,82 +416,79 @@ class CreditCardController extends GetxController implements GetxService {
     }
   }
 
-bool isCalculatingCharge = false;
+  bool isCalculatingCharge = false;
   CalRealTimeCharges? calRealTimeCharges;
   Future<ResponseModel> calRealTimeCharge() async {
-  log('----------- calRealTimeCharge Called ----------');
+    log('----------- calRealTimeCharge Called ----------');
 
-  isCalculatingCharge = true;
-  update();
+    isCalculatingCharge = true;
+    update();
 
-  try {
-    final String amount =
-        amountController.text.trim();
+    try {
+      final String amount = amountController.text.trim();
 
-    if (amount.isEmpty) {
+      if (amount.isEmpty) {
+        calRealTimeCharges = null;
+
+        return ResponseModel(
+          false,
+          'Amount is required',
+        );
+      }
+
+      final Map<String, dynamic> data = {
+        "amount": amount,
+      };
+
+      final Response response = await creditCardRepo.calRealTimeCharge(
+        data: FormData(data),
+      );
+
+      log('STATUS CODE: ${response.statusCode}');
+      log('RESPONSE BODY: ${response.body}');
+
+      if (response.statusCode == 200 &&
+          response.body is Map &&
+          response.body['status'] == 'success') {
+        calRealTimeCharges = CalRealTimeCharges.fromJson(
+          Map<String, dynamic>.from(
+            response.body['data'],
+          ),
+        );
+
+        return ResponseModel(
+          true,
+          response.body['message']?.toString() ??
+              'Charge calculated successfully',
+        );
+      }
+
       calRealTimeCharges = null;
 
       return ResponseModel(
         false,
-        'Amount is required',
+        response.body is Map
+            ? response.body['message']?.toString() ??
+                'Charge calculation failed'
+            : 'Charge calculation failed',
       );
-    }
-
-    final Map<String, dynamic> data = {
-      "amount": amount,
-    };
-
-    final Response response =
-        await creditCardRepo.calRealTimeCharge(
-      data: FormData(data),
-    );
-
-    log('STATUS CODE: ${response.statusCode}');
-    log('RESPONSE BODY: ${response.body}');
-
-    if (response.statusCode == 200 &&
-        response.body is Map &&
-        response.body['status'] == 'success') {
-      calRealTimeCharges =
-          CalRealTimeCharges.fromJson(
-        Map<String, dynamic>.from(
-          response.body['data'],
-        ),
+    } catch (e, stackTrace) {
+      log(
+        'ERROR AT calRealTimeCharge(): $e',
+        stackTrace: stackTrace,
       );
+
+      calRealTimeCharges = null;
 
       return ResponseModel(
-        true,
-        response.body['message']?.toString() ??
-            'Charge calculated successfully',
+        false,
+        'Error while calculating charge: $e',
       );
+    } finally {
+      isCalculatingCharge = false;
+      update();
     }
-
-    calRealTimeCharges = null;
-
-    return ResponseModel(
-      false,
-      response.body is Map
-          ? response.body['message']?.toString() ??
-              'Charge calculation failed'
-          : 'Charge calculation failed',
-    );
-  } catch (e, stackTrace) {
-    log(
-      'ERROR AT calRealTimeCharge(): $e',
-      stackTrace: stackTrace,
-    );
-
-    calRealTimeCharges = null;
-
-    return ResponseModel(
-      false,
-      'Error while calculating charge: $e',
-    );
-  } finally {
-    isCalculatingCharge = false;
-    update();
   }
-}
 
   // ============================================================
   // CLEAR
@@ -486,7 +504,7 @@ bool isCalculatingCharge = false;
     for (final controller in otpControllers) {
       controller.clear();
     }
-    
+
     isOtpVerified = false;
 
     otp = '';
@@ -553,6 +571,9 @@ bool isCalculatingCharge = false;
     cvvController.dispose();
     cardHolderNameController.dispose();
     bankNameController.dispose();
+
+    otpPinputController.dispose();
+    otpFocusNode.dispose();
 
     _otpTimer?.cancel();
     for (final controller in otpControllers) {
