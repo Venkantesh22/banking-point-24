@@ -115,57 +115,102 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
                     // ==================================================
 
                     GetBuilder<CustomKycController>(
-                        builder: (customKycController) {
-                      return CustomButton(
-                        title: 'Withdraw Money (Send OTP)',
-                        height: 48.h,
-                        radius: 8.r,
-                        gradient: LinearGradient(
-                          colors: [
-                            primaryColor,
-                            secondaryColor,
-                          ],
-                        ),
-                        onTap: () {
-                          if (!controller.isAmountValid) {
-                            return showToast(
+                      builder: (customKycController) {
+                        return CustomButton(
+                          title: 'Withdraw Money (Send OTP)',
+                          height: 48.h,
+                          radius: 8.r,
+                          gradient: LinearGradient(
+                            colors: [
+                              primaryColor,
+                              secondaryColor,
+                            ],
+                          ),
+                          onTap: () {
+                            // ==========================================================
+                            // VALIDATE AMOUNT
+                            // ==========================================================
+
+                            final amount = double.tryParse(
+                              controller.amountController.text.trim(),
+                            );
+
+                            final charges =
+                                controller.creditCardChargesModelList;
+
+                            final charge =
+                                charges.isNotEmpty ? charges.first : null;
+
+                            final minAmount = charge?.minAmount ?? 0;
+                            final maxAmount = charge?.maxAmount ?? 0;
+
+                            if (amount == null || amount <= 0) {
+                              showToast(
                                 message:
                                     'Please enter a valid withdrawal amount',
-                                toastType: ToastType.warning);
-                          }
+                                toastType: ToastType.warning,
+                              );
+                              return;
+                            }
 
-                          // if (!controller.isCardValid) {
-                          //   return showToast(
-                          //       message: 'Please enter valid card details',
-                          //       toastType: ToastType.warning);
-                          // }
+                            if (amount < minAmount) {
+                              showToast(
+                                message:
+                                    'Minimum withdrawal amount is ₹${minAmount.toStringAsFixed(0)}',
+                                toastType: ToastType.warning,
+                              );
+                              return;
+                            }
 
-                          if (formKey.currentState?.validate() ?? false) {
+                            if (amount > maxAmount) {
+                              showToast(
+                                message:
+                                    'Maximum withdrawal amount is ₹${maxAmount.toStringAsFixed(0)}',
+                                toastType: ToastType.warning,
+                              );
+                              return;
+                            }
+
+                            // ==========================================================
+                            // FORM VALIDATION
+                            // ==========================================================
+
+                            if (!(formKey.currentState?.validate() ?? false)) {
+                              return;
+                            }
+
+                            // ==========================================================
+                            // API
+                            // ==========================================================
+
                             controller
                                 .cardWithdrawalInitiate(
-                                    number: customKycController
-                                        .mobileNumberController.text
-                                        .trim())
+                              number: customKycController
+                                  .mobileNumberController.text
+                                  .trim(),
+                            )
                                 .then((value) {
                               if (value.isSuccess) {
                                 showToast(
-                                    message: value.message,
-                                    typeCheck: value.isSuccess);
+                                  message: value.message,
+                                  typeCheck: true,
+                                );
+
                                 navigate(
                                   context: context,
-                                  page: WithdrawVerifyOtpScreen(),
+                                  page: const WithdrawVerifyOtpScreen(),
                                 );
                               } else {
                                 showToast(
-                                    message: value.message,
-                                    typeCheck: value.isSuccess);
+                                  message: value.message,
+                                  typeCheck: false,
+                                );
                               }
                             });
-                          }
-                        },
-                      );
-                    }),
-
+                          },
+                        );
+                      },
+                    ),
                     sizedBoxHeight(
                       height: 20,
                     ),

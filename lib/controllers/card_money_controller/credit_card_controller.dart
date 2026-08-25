@@ -51,18 +51,11 @@ class CreditCardController extends GetxController implements GetxService {
 
   bool isLoading = false;
 
-  double gst = 0;
-  double totalDebit = 0;
-  double willGet = 0;
-
-  // ============================================================
-  // STATE
+  
   // ============================================================
 
-  bool isAmountValid = false;
-  bool isCardValid = false;
+
   bool isOtpVerified = false;
-  bool isProcessing = false;
 
   // ============================================================
   // OTP
@@ -493,15 +486,8 @@ bool isCalculatingCharge = false;
     for (final controller in otpControllers) {
       controller.clear();
     }
-
-    gst = 0;
-    totalDebit = 0;
-    willGet = 0;
-
-    isAmountValid = false;
-    isCardValid = false;
+    
     isOtpVerified = false;
-    isProcessing = false;
 
     otp = '';
 
