@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/generated/assets.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
@@ -40,6 +42,7 @@ class QuickActionsSection extends StatelessWidget {
         iconColor: const Color(0xFF2563EB),
         backgroundColor: const Color(0xFFEEF5FF),
         onTap: () {
+          // Get.find<CreditCardController>().fetchCreditCardTransactionList();
           navigate(
             context: context,
             page: TransactionHistoryScreen(

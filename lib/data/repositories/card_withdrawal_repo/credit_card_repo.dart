@@ -54,4 +54,10 @@ class CreditCardRepo {
         "calRealTimeCharge",
         data,
       );
+
+  // Future<Response> fetchCreditCardTransactionList() async =>
+  //     await apiClient.getData(
+  //       AppConstants.getCreditCardTransactionList,
+  //       "fetchCreditCardTransactionList",
+  //     );
 }
