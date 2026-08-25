@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/cal_real_time_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/withdrawal_model.dart';
@@ -50,14 +51,6 @@ class CreditCardController extends GetxController implements GetxService {
 
   bool isLoading = false;
 
-  double minimumAmount = 1000;
-  double maximumAmount = 100000;
-  double availableLimit = 150000;
-
-  double processingFeePercentage = 2.0;
-  double gstPercentage = 18.0;
-
-  double processingFee = 0;
   double gst = 0;
   double totalDebit = 0;
   double willGet = 0;
@@ -91,47 +84,6 @@ class CreditCardController extends GetxController implements GetxService {
     }
 
     isOtpVerified = true;
-    update();
-  }
-
-  // ============================================================
-  // AMOUNT
-  // ============================================================
-
-  void calculateAmount() {
-    final String value = amountController.text.trim();
-
-    if (value.isEmpty) {
-      processingFee = 0;
-      gst = 0;
-      totalDebit = 0;
-      willGet = 0;
-      isAmountValid = false;
-
-      update();
-      return;
-    }
-
-    final double? amount = double.tryParse(value);
-
-    if (amount == null) {
-      isAmountValid = false;
-      update();
-      return;
-    }
-
-    isAmountValid = amount >= minimumAmount &&
-        amount <= maximumAmount &&
-        amount <= availableLimit;
-
-    processingFee = amount * processingFeePercentage / 100;
-
-    gst = processingFee * gstPercentage / 100;
-
-    totalDebit = amount + processingFee + gst;
-
-    willGet = amount;
-
     update();
   }
 
@@ -399,39 +351,133 @@ class CreditCardController extends GetxController implements GetxService {
   Future<ResponseModel> fetchCreditCardCharges() async {
     log('----------- fetchCreditCardCharges Called ----------');
 
-    ResponseModel responseModel;
-
     isLoading = true;
     update();
 
     try {
-      Response response = await creditCardRepo.fetchCreditCardCharges();
+      final Response response = await creditCardRepo.fetchCreditCardCharges();
 
-      if (response.statusCode == 200 && response.body['success'] == true) {
-        creditCardChargesModelList = (response.body['data'] as List)
-            .map(
-              (e) => CreditCardChargesModel.fromJson(
-                Map<String, dynamic>.from(e),
-              ),
-            )
-            .toList();
+      if (response.statusCode == 200 &&
+          response.body is Map &&
+          response.body['success'] == true) {
+        final data = response.body['data'];
 
-        responseModel = ResponseModel(true,
-            response.body['message'] ?? " fetchCreditCardCharges success");
-      } else {
-        responseModel = ResponseModel(false,
-            response.body['message'] ?? "Error while fetchCreditCardCharges");
+        if (data is List) {
+          creditCardChargesModelList = data
+              .map(
+                (e) => CreditCardChargesModel.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
+              .toList();
+        } else {
+          creditCardChargesModelList = [];
+        }
+
+        return ResponseModel(
+          true,
+          response.body['message'] ?? 'fetchCreditCardCharges success',
+        );
       }
-    } catch (e) {
-      log('ERROR AT fetchCreditCardCharges(): $e');
-      responseModel =
-          ResponseModel(false, "Error while fetchCreditCardCharges user $e");
+
+      return ResponseModel(
+        false,
+        response.body is Map
+            ? response.body['message'] ?? 'Error while fetchCreditCardCharges'
+            : response.statusText ?? 'Error while fetchCreditCardCharges',
+      );
+    } catch (e, stackTrace) {
+      log(
+        'ERROR AT fetchCreditCardCharges(): $e',
+        stackTrace: stackTrace,
+      );
+
+      return ResponseModel(
+        false,
+        'Error while fetchCreditCardCharges: $e',
+      );
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+bool isCalculatingCharge = false;
+  CalRealTimeCharges? calRealTimeCharges;
+  Future<ResponseModel> calRealTimeCharge() async {
+  log('----------- calRealTimeCharge Called ----------');
+
+  isCalculatingCharge = true;
+  update();
+
+  try {
+    final String amount =
+        amountController.text.trim();
+
+    if (amount.isEmpty) {
+      calRealTimeCharges = null;
+
+      return ResponseModel(
+        false,
+        'Amount is required',
+      );
     }
 
-    isLoading = false;
+    final Map<String, dynamic> data = {
+      "amount": amount,
+    };
+
+    final Response response =
+        await creditCardRepo.calRealTimeCharge(
+      data: FormData(data),
+    );
+
+    log('STATUS CODE: ${response.statusCode}');
+    log('RESPONSE BODY: ${response.body}');
+
+    if (response.statusCode == 200 &&
+        response.body is Map &&
+        response.body['status'] == 'success') {
+      calRealTimeCharges =
+          CalRealTimeCharges.fromJson(
+        Map<String, dynamic>.from(
+          response.body['data'],
+        ),
+      );
+
+      return ResponseModel(
+        true,
+        response.body['message']?.toString() ??
+            'Charge calculated successfully',
+      );
+    }
+
+    calRealTimeCharges = null;
+
+    return ResponseModel(
+      false,
+      response.body is Map
+          ? response.body['message']?.toString() ??
+              'Charge calculation failed'
+          : 'Charge calculation failed',
+    );
+  } catch (e, stackTrace) {
+    log(
+      'ERROR AT calRealTimeCharge(): $e',
+      stackTrace: stackTrace,
+    );
+
+    calRealTimeCharges = null;
+
+    return ResponseModel(
+      false,
+      'Error while calculating charge: $e',
+    );
+  } finally {
+    isCalculatingCharge = false;
     update();
-    return responseModel;
   }
+}
 
   // ============================================================
   // CLEAR
@@ -448,7 +494,6 @@ class CreditCardController extends GetxController implements GetxService {
       controller.clear();
     }
 
-    processingFee = 0;
     gst = 0;
     totalDebit = 0;
     willGet = 0;

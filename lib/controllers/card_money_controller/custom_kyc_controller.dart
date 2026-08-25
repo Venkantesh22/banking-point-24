@@ -562,7 +562,8 @@ class CustomKycController extends GetxController implements GetxService {
 
       return ResponseModel(
         false,
-        response.body['message']?.toString() ?? 'OTP customerKycMobileCreditCarVerify failed',
+        response.body['message']?.toString() ??
+            'OTP customerKycMobileCreditCarVerify failed',
       );
     } catch (e, stackTrace) {
       log(
@@ -579,6 +580,8 @@ class CustomKycController extends GetxController implements GetxService {
       update();
     }
   }
+
+  
 
   //* Call confirm and Transaction credit card confirmAndTransaction()
   Future<ResponseModel> confirmAndTransaction({

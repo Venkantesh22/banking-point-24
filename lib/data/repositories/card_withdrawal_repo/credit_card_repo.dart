@@ -43,9 +43,15 @@ class CreditCardRepo {
         data,
       );
 
-  Future<Response> fetchCreditCardCharges() async =>
-      await apiClient.getData(
+  Future<Response> fetchCreditCardCharges() async => await apiClient.getData(
         AppConstants.getCreditCardCharges,
         "getCreditCardCharges",
+      );
+
+  Future<Response> calRealTimeCharge({required FormData data}) async =>
+      await apiClient.postData(
+        AppConstants.postCalRealTimeCharge,
+        "calRealTimeCharge",
+        data,
       );
 }

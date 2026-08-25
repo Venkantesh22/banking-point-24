@@ -300,6 +300,9 @@ class AppConstants {
   static const String getCreditCardCharges =
       "api/credit-card-cash-withdrawal/v1/charges-list";
 
+  static const String postCalRealTimeCharge =
+      "api/credit-card-cash-withdrawal/v1/calculate-charges";
+
   static const String postConfirmAndTransaction =
       "api/credit-card-cash-withdrawal/v1/confirm";
 
