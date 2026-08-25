@@ -13,8 +13,8 @@ class TopBannerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String todaysCollection = PriceConverter.convertToNumberFormat(120000);
-    String growthPercentage = "12.5";
+    String todaysCollection = PriceConverter.convertToNumberFormat(0);
+    String growthPercentage = "0";
     return Stack(
       children: [
         CustomImage(
