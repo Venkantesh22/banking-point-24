@@ -22,6 +22,19 @@ class EnterAccountDetailsScreen extends StatefulWidget {
 }
 
 class _EnterAccountDetailsScreenState extends State<EnterAccountDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Get.find<UpiBankController>();
+      controller.accountHolderController.clear();
+      controller.accountNumberController.clear();
+      controller.ifscController.clear();
+      controller.bankNameController.clear();
+      controller.update();
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override

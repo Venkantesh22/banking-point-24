@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
+import 'package:lekra/controllers/card_money_controller/custom_kyc_controller.dart';
+import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 
@@ -8,70 +12,75 @@ class PaymentAmountCard extends StatelessWidget {
     super.key,
   });
 
-  // Demo values
-  static const String amount = '₹25,000.00';
-  static const String processingFee = '₹0.00';
-  static const String gst = '₹0.00';
-  static const String totalDebit = '₹25,000.00';
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        18.w,
-        18.h,
-        18.w,
-        10.h,
-      ),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(
-          color: greyBorder,
+    return GetBuilder<CreditCardController>(builder: (creditCardController) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(
+          18.w,
+          18.h,
+          18.w,
+          10.h,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(
+            color: greyBorder,
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _AmountRow(
-            label: 'Amount',
-            value: amount,
-          ),
-
-          _AmountRow(
-            label: 'Processing Fee',
-            value: processingFee,
-          ),
-
-          _AmountRow(
-            label: 'GST',
-            value: gst,
-          ),
-
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.h),
-            child: Divider(
-              height: 1,
-              color: greyBorder,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.035),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-          ),
-
-          _AmountRow(
-            label: 'Total Debit',
-            value: totalDebit,
-            valueColor: primaryColor,
-            valueFontWeight: FontWeight.w700,
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+        child: Column(
+          children: [
+            _AmountRow(
+              label: 'Amount',
+              value: PriceConverter.convertToNumberFormat(double.tryParse(
+                      creditCardController.initiationWithdrawalModel?.amount ??
+                          "") ??
+                  0.0),
+            ),
+            _AmountRow(
+                label: 'Processing Fee',
+                value: PriceConverter.convertToNumberFormat(double.tryParse(
+                        creditCardController
+                                .initiationWithdrawalModel?.processingFee ??
+                            "") ??
+                    0.0)),
+            _AmountRow(
+              label: 'GST',
+              value: PriceConverter.convertToNumberFormat(double.tryParse(
+                      creditCardController.initiationWithdrawalModel?.gst ??
+                          "") ??
+                  0.0),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              child: Divider(
+                height: 1,
+                color: greyBorder,
+              ),
+            ),
+            _AmountRow(
+              label: 'Total Debit',
+              value: PriceConverter.convertToNumberFormat(double.tryParse(
+                      creditCardController
+                              .initiationWithdrawalModel?.totalCardDebit ??
+                          "") ??
+                  0.0),
+              valueColor: primaryColor,
+              valueFontWeight: FontWeight.w700,
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -103,7 +112,6 @@ class _AmountRow extends StatelessWidget {
                   ),
             ),
           ),
-
           CustomText(
             value,
             textAlign: TextAlign.right,

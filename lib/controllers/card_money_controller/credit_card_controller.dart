@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lekra/data/models/cash%20withdrawal%20model/bank_tranfet_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/cal_real_time_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
@@ -30,17 +29,17 @@ class CreditCardController extends GetxController implements GetxService {
   final TextEditingController amountController = TextEditingController();
 
   final TextEditingController cardNumberController =
-      TextEditingController(text: "4532758912345678");
+      TextEditingController();
 
   final TextEditingController expiryDateController = TextEditingController();
 
   final TextEditingController cvvController =
-      TextEditingController(text: "999");
+      TextEditingController();
 
   final TextEditingController cardHolderNameController =
-      TextEditingController(text: "Rahul Sharma");
+      TextEditingController();
   final TextEditingController bankNameController =
-      TextEditingController(text: "HDFC Bank");
+      TextEditingController();
 
   final List<TextEditingController> otpControllers = List.generate(
     6,

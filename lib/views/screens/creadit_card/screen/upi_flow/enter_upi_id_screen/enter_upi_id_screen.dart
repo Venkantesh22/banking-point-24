@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:get/state_manager.dart';
 import 'package:lekra/controllers/card_money_controller/upi_bank_controller.dart';
 import 'package:lekra/services/constants.dart';
@@ -20,6 +21,16 @@ class EnterUpiIdScreen extends StatefulWidget {
 }
 
 class _EnterUpiIdScreenState extends State<EnterUpiIdScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Get.find<UpiBankController>();
+      controller.upiController.clear();
+      controller.update();
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override

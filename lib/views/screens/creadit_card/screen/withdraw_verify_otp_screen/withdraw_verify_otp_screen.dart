@@ -20,14 +20,15 @@ class WithdrawVerifyOtpScreen extends StatefulWidget {
       _WithdrawVerifyOtpScreenState();
 }
 
-class _WithdrawVerifyOtpScreenState
-    extends State<WithdrawVerifyOtpScreen> {
+class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<CreditCardController>().startOtpTimer();
+      final controller = Get.find<CreditCardController>();
+      controller.startOtpTimer();
+      controller.otpPinputController.clear();
     });
   }
 
@@ -146,24 +147,18 @@ class _WithdrawVerifyOtpScreenState
                     keyboardType: TextInputType.number,
                     controller: creditCardController.otpPinputController,
                     focusNode: creditCardController.otpFocusNode,
-
                     defaultPinTheme: defaultPinTheme,
                     focusedPinTheme: focusedPinTheme,
                     submittedPinTheme: submittedPinTheme,
-
                     showCursor: true,
                     autofocus: true,
-
                     inputFormatters: const [],
-
                     onChanged: (value) {
                       creditCardController.otp = value;
-                      creditCardController.isOtpVerified =
-                          value.length == 6;
+                      creditCardController.isOtpVerified = value.length == 6;
 
                       creditCardController.update();
                     },
-
                     onCompleted: (value) {
                       creditCardController.otp = value;
                       creditCardController.isOtpVerified = true;
@@ -190,21 +185,17 @@ class _WithdrawVerifyOtpScreenState
 
                   if (creditCardController.canResendOtp) ...[
                     sizedBoxHeight(height: 10),
-
                     TextButton(
                       onPressed: creditCardController.isLoading
                           ? null
                           : () async {
-                              final result =
-                                  await creditCardController
-                                      .resendCreditCardOTP();
+                              final result = await creditCardController
+                                  .resendCreditCardOTP();
 
                               if (result.isSuccess) {
-                                creditCardController
-                                    .clearOtpForPinput();
+                                creditCardController.clearOtpForPinput();
 
-                                creditCardController
-                                    .startOtpTimer();
+                                creditCardController.startOtpTimer();
 
                                 showToast(
                                   message: result.message,
@@ -235,8 +226,7 @@ class _WithdrawVerifyOtpScreenState
                   // ==================================================
 
                   CustomButton(
-                    isLoading:
-                        creditCardController.isLoading,
+                    isLoading: creditCardController.isLoading,
                     title: 'Verify OTP',
                     height: 48.h,
                     radius: 8.r,
@@ -249,20 +239,16 @@ class _WithdrawVerifyOtpScreenState
                     onTap: creditCardController.isLoading
                         ? null
                         : () async {
-                            if (creditCardController
-                                    .otp.length !=
-                                6) {
+                            if (creditCardController.otp.length != 6) {
                               showToast(
-                                message:
-                                    'Please enter a valid 6 digit OTP',
+                                message: 'Please enter a valid 6 digit OTP',
                                 toastType: ToastType.error,
                               );
                               return;
                             }
 
-                            final result =
-                                await creditCardController
-                                    .creditCardOTPVerify();
+                            final result = await creditCardController
+                                .creditCardOTPVerify();
 
                             if (result.isSuccess) {
                               showToast(
@@ -272,8 +258,7 @@ class _WithdrawVerifyOtpScreenState
 
                               navigate(
                                 context: context,
-                                page:
-                                    const TransactionSuccessScreen(),
+                                page: const TransactionSuccessScreen(),
                               );
                             } else {
                               showToast(

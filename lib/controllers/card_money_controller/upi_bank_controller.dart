@@ -20,8 +20,7 @@ class UpiBankController extends GetxController implements GetxService {
 
   bool isLoading = false;
 
-  final TextEditingController upiController =
-      TextEditingController(text: 'rahul.kumar@okhdfcbank');
+  final TextEditingController upiController = TextEditingController();
 
   CreditCardUpiModel? creditCardUpiModel;
   //* Validate Customer UPI id validateCustomerUPI()
@@ -63,21 +62,13 @@ class UpiBankController extends GetxController implements GetxService {
     return responseModel;
   }
 
-  final TextEditingController accountHolderController = TextEditingController(
-    text: 'Rahul Kumar',
-  );
+  final TextEditingController accountHolderController = TextEditingController();
 
-  final TextEditingController accountNumberController = TextEditingController(
-    text: '123456789012',
-  );
+  final TextEditingController accountNumberController = TextEditingController();
 
-  final TextEditingController ifscController = TextEditingController(
-    text: 'HDFC0001234',
-  );
+  final TextEditingController ifscController = TextEditingController();
 
-  final TextEditingController bankNameController = TextEditingController(
-    text: 'HDFC Bank',
-  );
+  final TextEditingController bankNameController = TextEditingController();
 
   BankInfoModel? bankInfoModel;
   //* Validate Customer UPI id validateBankAccountInfo()
