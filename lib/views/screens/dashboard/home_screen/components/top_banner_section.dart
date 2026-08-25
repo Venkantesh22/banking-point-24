@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/dashboard_controller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/base/common_button.dart';
 import 'package:lekra/views/base/custom_image.dart';
+import 'package:lekra/views/screens/dashboard/dashboard_screen.dart';
 
 class TopBannerSection extends StatelessWidget {
   const TopBannerSection({
@@ -82,7 +85,10 @@ class TopBannerSection extends StatelessWidget {
               SizedBox(height: 20.h),
               CustomButton(
                 type: ButtonType.secondary,
-                onTap: () {},
+                onTap: () {
+                  Get.find<DashBoardController>().dashPage = 1;
+                  navigate(context: context, page: DashboardScreen());
+                },
                 radius: 20.r,
                 height: 30.h,
                 borderColor: white,

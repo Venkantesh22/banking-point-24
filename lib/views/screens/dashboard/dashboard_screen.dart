@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lekra/services/date_formatters_and_converters.dart';
+import 'package:lekra/views/screens/creadit_card/screen/credit_card_transaction_list_screen/credit_card_transaction_list_screen.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/home_screen.dart';
-import 'package:lekra/views/screens/transcation_history/transaction_history_screen.dart';
 import 'package:lekra/views/screens/drawer_screen/drawer_screen.dart';
 
 import '../../../controllers/dashboard_controller.dart';
@@ -49,11 +48,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     isReload: true,
                     scaffoldKey: _dashboardScaffoldKey,
                   ),
+
+                  CreditCardTransactionListScreen(),
                   // CheckCustomerKycScreen(),
-                  TransactionHistoryScreen(
-                    fromDateValue: DateTime(2024, 1, 1),
-                    todateValue: getDateTime(),
-                  ),
+                  // TransactionHistoryScreen(
+                  //   fromDateValue: DateTime(2024, 1, 1),
+                  //   todateValue: getDateTime(),
+                  // ),
                 ],
               ),
 
