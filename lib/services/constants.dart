@@ -310,7 +310,7 @@ class AppConstants {
 
   static String getCreditCardCashWithdrawalTransactionStatus(
           {required String transactionId}) =>
-      "api/credit-card-cash-withdrawal/v1/:$transactionId/status";
+      "api/credit-card-cash-withdrawal/v1/$transactionId";
 
   //* Vender KYC API
   static const String postVenderKycBasicDetails =

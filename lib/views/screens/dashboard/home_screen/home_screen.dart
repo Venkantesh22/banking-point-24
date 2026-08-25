@@ -18,6 +18,7 @@ import 'package:lekra/views/screens/auth_screens/login_screen.dart';
 import 'package:lekra/views/screens/dashboard/dashboard_screen.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/banner_image_section.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/kyc_pending_card.dart';
+import 'package:lekra/views/screens/dashboard/home_screen/components/kyc_successfull_card.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/quick_acitons_section/quick_actions_section.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/top_banner_section.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/transaction_history_section.dart';
@@ -41,40 +42,28 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       log("initState tap");
 
-      final auth = Get.find<AuthController>();
       final reportContro = Get.find<ReportController>();
       Get.find<FormController>().venderKycStatus();
 
+      final dateFormat = DateFormat('yyyy-MM-dd');
+
       if (widget.isReload) {
-        auth.checkBalance().then((value) {
+        Get.find<ReportController>()
+            .fetchYesBankMerchantCollection(
+          fromdate: dateFormat.format(getDateTime()),
+          todate: dateFormat.format(getDateTime()),
+        )
+            .then((value) {
           if (value.isSuccess) {
-            if (auth.userModel?.isKYCDone ?? false) {
-              Get.find<BasicController>().postGenerateQR();
-            }
-
-            final dateFormat = DateFormat('yyyy-MM-dd');
-
-            Get.find<ReportController>()
-                .fetchYesBankMerchantCollection(
-              fromdate: dateFormat.format(getDateTime()),
-              todate: dateFormat.format(getDateTime()),
-            )
-                .then((value) {
-              if (value.isSuccess) {
-                reportContro.convertTODataForGraph(
-                    reportContro.yesBankMerchantCollectionList);
-              }
-            });
-
-            reportContro.fetchTransactionReport(
-                fromdate: dateFormat.format(getDateTime()),
-                todate: dateFormat.format(getDateTime()),
-                isShowOnly10: true);
-          } else {
-            // auth.logout(context);
-            // navigate(context: context, page: LoginScreen());
+            reportContro.convertTODataForGraph(
+                reportContro.yesBankMerchantCollectionList);
           }
         });
+
+        reportContro.fetchTransactionReport(
+            fromdate: dateFormat.format(getDateTime()),
+            todate: dateFormat.format(getDateTime()),
+            isShowOnly10: true);
       }
     });
   }
@@ -155,40 +144,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 // KYC PENDING
                 // ==================================================
 
-                GetBuilder<FormController>(builder: (formController) {
-                  if (formController.venderKycStatusModel?.kycStatus ==
-                      "approved") {
-                    return SizedBox();
-                  }
+                GetBuilder<FormController>(
+                  builder: (formController) {
+                    final String status = formController
+                            .venderKycStatusModel?.kycStatus
+                            ?.trim()
+                            .toLowerCase() ??
+                        '';
 
-                  return CustomShimmer(
-                    isLoading: formController.isLoading,
-                    child: KycPendingCard(
-                      kycStatus:
-                          formController.venderKycStatusModel?.kycStatus ?? "",
-                      onTap: () {
-                        (formController.venderKycStatusModel
-                                    ?.isRegistrationStarted ??
-                                false)
-                            ? navigate(
-                                context: context,
-                                page: const KycFormScreen(),
-                              )
-                            : navigate(
-                                context: context,
-                                page: KycSubmittedSuccessScreen(
-                                  onGoToDashboard: () {
-                                    Get.find<DashBoardController>().dashPage =
-                                        0;
-                                    navigate(
-                                        context: context,
-                                        page: DashboardScreen());
-                                  },
-                                ));
-                      },
-                    ),
-                  );
-                }),
+                    if (status == 'approved') {
+                      return CustomShimmer(
+                        isLoading: formController.isLoading,
+                        child: const KycSuccessCard(),
+                      );
+                    }
+
+                    return CustomShimmer(
+                      isLoading: formController.isLoading,
+                      child: KycPendingCard(
+                        kycStatus:
+                            formController.venderKycStatusModel?.kycStatus ??
+                                '',
+                        onTap: () {
+                          final isRegistrationStarted = formController
+                                  .venderKycStatusModel
+                                  ?.isRegistrationStarted ??
+                              false;
+
+                          if (isRegistrationStarted) {
+                            navigate(
+                              context: context,
+                              page: const KycFormScreen(),
+                            );
+                          } else {
+                            navigate(
+                              context: context,
+                              page: KycSubmittedSuccessScreen(
+                                onGoToDashboard: () {
+                                  Get.find<DashBoardController>().dashPage = 0;
+
+                                  navigate(
+                                    context: context,
+                                    page: DashboardScreen(),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
                 SizedBox(height: 20.h),
 
                 // ==================================================

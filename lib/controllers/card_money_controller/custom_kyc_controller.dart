@@ -581,8 +581,6 @@ class CustomKycController extends GetxController implements GetxService {
     }
   }
 
-  
-
   //* Call confirm and Transaction credit card confirmAndTransaction()
   Future<ResponseModel> confirmAndTransaction({
     required String? number,
@@ -619,9 +617,8 @@ class CustomKycController extends GetxController implements GetxService {
   }
 
   //* check a Credit card withdrawal transaction status creditCardCashWithdrawalTransactionStatus()
-  Future<ResponseModel> creditCardCashWithdrawalTransactionStatus({
-    required String? number,
-  }) async {
+  Future<ResponseModel> creditCardCashWithdrawalTransactionStatus(
+      {required String? transactionId}) async {
     log('----------- creditCardCashWithdrawalTransactionStatus Called ----------');
 
     ResponseModel responseModel;

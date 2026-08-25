@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,6 +40,48 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
       controller.cardHolderNameController.clear();
       controller.bankNameController.clear();
     });
+  }
+
+  bool _validateWithdrawalAmount(
+    CreditCardController controller,
+  ) {
+    final amount = double.tryParse(
+      controller.amountController.text.trim(),
+    );
+
+    final charges = controller.creditCardChargesModelList;
+    final charge = charges.isNotEmpty ? charges.first : null;
+
+    final minAmount = charge?.minAmount ?? 0;
+    final maxAmount = charge?.maxAmount ?? 0;
+
+    if (amount == null || amount <= 0) {
+      showToast(
+        message: 'Please enter a valid withdrawal amount',
+        toastType: ToastType.warning,
+      );
+      return false;
+    }
+
+    if (amount < minAmount) {
+      showToast(
+        message:
+            'Minimum withdrawal amount is ₹${minAmount.toStringAsFixed(0)}',
+        toastType: ToastType.warning,
+      );
+      return false;
+    }
+
+    if (amount > maxAmount) {
+      showToast(
+        message:
+            'Maximum withdrawal amount is ₹${maxAmount.toStringAsFixed(0)}',
+        toastType: ToastType.warning,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   @override
@@ -235,12 +279,84 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
 // ==================================================================
 // WITHDRAW AMOUNT CARD
 // ==================================================================
-class _WithdrawAmountCard extends StatelessWidget {
+class _WithdrawAmountCard extends StatefulWidget {
   final CreditCardController controller;
 
   const _WithdrawAmountCard({
     required this.controller,
   });
+
+  @override
+  State<_WithdrawAmountCard> createState() => _WithdrawAmountCardState();
+}
+
+class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
+  Timer? _amountDebounce;
+
+  CreditCardController get controller => widget.controller;
+
+  @override
+  void dispose() {
+    _amountDebounce?.cancel();
+    super.dispose();
+  }
+
+  void _onAmountChanged(
+    String value,
+    CreditCardController creditCardController,
+    double minAmount,
+    double maxAmount,
+  ) {
+    // Cancel previous timer.
+    _amountDebounce?.cancel();
+
+    final amount = double.tryParse(value.trim());
+
+    // Clear calculation when invalid/empty.
+    if (amount == null || amount <= 0) {
+      creditCardController.calRealTimeCharges = null;
+      creditCardController.update();
+      return;
+    }
+
+    // Minimum validation.
+    if (amount < minAmount) {
+      creditCardController.calRealTimeCharges = null;
+      creditCardController.update();
+      return;
+    }
+
+    // Maximum validation.
+    if (amount > maxAmount) {
+      creditCardController.calRealTimeCharges = null;
+      creditCardController.update();
+      return;
+    }
+
+    // Wait 2 seconds after the user stops typing.
+    _amountDebounce = Timer(
+      const Duration(seconds: 2),
+      () {
+        if (!mounted) {
+          return;
+        }
+
+        // Make sure the value is still valid before API call.
+        final latestAmount = double.tryParse(
+          controller.amountController.text.trim(),
+        );
+
+        if (latestAmount == null ||
+            latestAmount <= 0 ||
+            latestAmount < minAmount ||
+            latestAmount > maxAmount) {
+          return;
+        }
+
+        creditCardController.calRealTimeCharge();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -251,6 +367,7 @@ class _WithdrawAmountCard extends StatelessWidget {
         final charge = charges.isNotEmpty ? charges.first : null;
 
         final minAmount = charge?.minAmount ?? 0;
+
         final maxAmount = charge?.maxAmount ?? 0;
 
         final realTimeCharge = creditCardController.calRealTimeCharges;
@@ -276,9 +393,7 @@ class _WithdrawAmountCard extends StatelessWidget {
                   color: black,
                 ),
               ),
-
               sizedBoxHeight(height: 8),
-
               AppTextFieldWithHeading(
                 controller: controller.amountController,
                 hindText: '0.00',
@@ -301,58 +416,19 @@ class _WithdrawAmountCard extends StatelessWidget {
                 borderWidth: 1,
                 borderRadius: 8,
                 onChanged: (value) {
-                  final amount = double.tryParse(value.trim());
-
-                  if (amount == null || amount <= 0) {
-                    creditCardController.calRealTimeCharges = null;
-                    creditCardController.update();
-                    return;
-                  }
-
-                  // ==========================================================
-                  // MINIMUM AMOUNT WARNING
-                  // ==========================================================
-
-                  if (amount < minAmount) {
-                    showToast(
-                      message:
-                          'Minimum withdrawal amount is ₹${minAmount.toStringAsFixed(0)}',
-                      toastType: ToastType.warning,
-                    );
-
-                    creditCardController.calRealTimeCharges = null;
-                    creditCardController.update();
-                    return;
-                  }
-
-                  // ==========================================================
-                  // MAXIMUM AMOUNT WARNING
-                  // ==========================================================
-
-                  if (amount > maxAmount) {
-                    showToast(
-                      message:
-                          'Maximum withdrawal amount is ₹${maxAmount.toStringAsFixed(0)}',
-                      toastType: ToastType.warning,
-                    );
-
-                    creditCardController.calRealTimeCharges = null;
-                    creditCardController.update();
-                    return;
-                  }
-
-                  // ==========================================================
-                  // VALID AMOUNT → CALL REAL-TIME CHARGE API
-                  // ==========================================================
-
-                  creditCardController.calRealTimeCharge();
+                  _onAmountChanged(
+                    value,
+                    creditCardController,
+                    minAmount.toDouble(),
+                    maxAmount.toDouble(),
+                  );
                 },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter withdrawal amount';
                   }
 
-                  final double? amount = double.tryParse(value.trim());
+                  final amount = double.tryParse(value.trim());
 
                   if (amount == null) {
                     return 'Please enter a valid amount';
@@ -369,19 +445,15 @@ class _WithdrawAmountCard extends StatelessWidget {
                   return null;
                 },
               ),
-
               sizedBoxHeight(height: 12),
-
               _amountRow(
                 'Min. Amount',
                 charges.isEmpty ? '-' : minAmount.toString(),
               ),
-
               _amountRow(
                 'Max. Amount',
                 charges.isEmpty ? '-' : maxAmount.toString(),
               ),
-
               _amountRow(
                 'Processing Fee',
                 charge == null
@@ -390,13 +462,7 @@ class _WithdrawAmountCard extends StatelessWidget {
                         ? '${charge.chargeValue}% + GST'
                         : '${charge.chargeValue} flat + GST',
               ),
-
               sizedBoxHeight(height: 6),
-
-              // ======================================================
-              // REAL-TIME CALCULATION
-              // ======================================================
-
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(
@@ -478,7 +544,6 @@ class _WithdrawAmountCard extends StatelessWidget {
     );
   }
 }
-
 // ==================================================================
 // CREDIT CARD FORM
 // ==================================================================

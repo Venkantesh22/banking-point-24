@@ -90,20 +90,20 @@ List<ContactUSSocialMediaWIdgetModel> contactUSSocialMediaWIdgetList = [
       title: "Instagram",
       subtitle: "7,5K Followers",
       onTap: () {
-        LaunchHelper.launchInstagram(username: "tpipay_");
+        LaunchHelper.launchInstagram(username: "");
       }),
   ContactUSSocialMediaWIdgetModel(
       icon: Assets.imagesWhatsappBlack,
       title: "WhatsUp",
       subtitle: "Available Mon-Sat  • 9 AM - 7 PM",
       onTap: () {
-        LaunchHelper.launchWhatsApp(phone: "8926600317");
+        LaunchHelper.launchWhatsApp(phone: "11111111111");
       }),
   ContactUSSocialMediaWIdgetModel(
       icon: Assets.imagesWebBlack,
       title: "Visit Website",
-      subtitle: "https://www.tpipay.ai/",
+      subtitle: "https://www.bankin24.com/",
       onTap: () async {
-        LaunchHelper.launchInBrowser(Uri.parse("https://www.tpipay.ai/"));
+        LaunchHelper.launchInBrowser(Uri.parse("https://www.bankin24.com/"));
       }),
 ];

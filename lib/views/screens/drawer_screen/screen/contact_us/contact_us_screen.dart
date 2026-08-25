@@ -60,7 +60,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                   child: ContainerOfCallAndEmail(
                     label: "Call Us",
                     icon: Assets.svgsCall,
-                    onTap: () => LaunchHelper.callUs(number: "8926600317"),
+                    onTap: () => LaunchHelper.callUs(number: "9876543210"),
                   ),
                 ),
                 SizedBox(
@@ -71,7 +71,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                     label: "Email Us",
                     icon: Assets.svgsEmail,
                     onTap: () =>
-                        LaunchHelper.emailUs(email: "support@tpipay.ai"),
+                        LaunchHelper.emailUs(email: "info@banking24.com"),
                   ),
                 ),
               ],
