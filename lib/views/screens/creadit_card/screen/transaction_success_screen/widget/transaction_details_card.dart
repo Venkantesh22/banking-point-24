@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/initiation_withdrawal_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
@@ -7,22 +8,31 @@ import 'package:lekra/services/theme.dart';
 class TransactionDetailsCard extends StatelessWidget {
   const TransactionDetailsCard({
     super.key,
+    required this.transaction,
   });
 
-  // Demo data
-  static const String amount = '₹25,000.00';
-  static const String processingFee = '₹0.00';
-  static const String gst = '₹0.00';
-  static const String totalDebit = '₹25,000.00';
-
-  static const String bankName = 'HDFC Bank';
-  static const String accountNumber = 'XXXX XXXX 4567';
-  static const String transactionId = 'TXN51234567890';
-  static const String dateTime = '12 May 2025 • 11:45 AM';
-  static const String status = 'Successful';
+  final InitiationWithdrawalModel? transaction;
 
   @override
   Widget build(BuildContext context) {
+    final String amount = transaction?.amount ?? '-';
+
+    final String processingFee = transaction?.processingFee ?? '-';
+
+    final String gst = transaction?.gst ?? '-';
+
+    final String totalDebit = transaction?.totalCardDebit ?? '-';
+
+    final String bankName = transaction?.cardBankName ?? '-';
+
+    final String accountNumber = transaction?.cardMasked ?? '-';
+
+    final String transactionId = transaction?.transactionId ?? '-';
+
+    final String dateTime = transaction?.dateTime ?? '-';
+
+    final String status = transaction?.status ?? '-';
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
@@ -39,7 +49,9 @@ class TransactionDetailsCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(
+              alpha: 0.04,
+            ),
             blurRadius: 14,
             offset: const Offset(0, 5),
           ),
@@ -47,20 +59,25 @@ class TransactionDetailsCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const TransactionDetailRow(
+          TransactionDetailRow(
             label: 'Amount',
-            value: amount,
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(amount) ?? 0.0),
           ),
-          const TransactionDetailRow(
+          TransactionDetailRow(
             label: 'Processing Fee',
-            value: processingFee,
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(processingFee) ?? 0.0),
           ),
-          const TransactionDetailRow(
+          TransactionDetailRow(
             label: 'GST',
-            value: gst,
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(gst) ?? 0.0),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+              vertical: 10.h,
+            ),
             child: Divider(
               color: greyBorder,
               height: 1,
@@ -68,35 +85,50 @@ class TransactionDetailsCard extends StatelessWidget {
           ),
           TransactionDetailRow(
             label: 'Total Debit',
-            value: totalDebit,
-            valueColor: red,
+            value: PriceConverter.convertToNumberFormat(
+                double.tryParse(totalDebit) ?? 0.0),
+            valueColor: _statusColor(
+              status,
+            ),
             valueFontWeight: FontWeight.w700,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+              vertical: 10.h,
+            ),
             child: Divider(
               color: greyBorder,
               height: 1,
             ),
           ),
-          const TransactionDetailRow(
+          TransactionDetailRow(
             label: 'To',
             value: bankName,
           ),
-          const TransactionDetailRow(
-            label: 'A/c No.',
+          TransactionDetailRow(
+            label: 'Card',
             value: accountNumber,
           ),
-          const TransactionDetailRow(
+          TransactionDetailRow(
+            label: 'Card Network',
+            value: transaction?.cardNetwork ?? '-',
+          ),
+          TransactionDetailRow(
+            label: 'Customer',
+            value: transaction?.customerName ?? '-',
+          ),
+          TransactionDetailRow(
             label: 'Transaction ID',
             value: transactionId,
           ),
-          const TransactionDetailRow(
+          TransactionDetailRow(
             label: 'Date & Time',
             value: dateTime,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+              vertical: 10.h,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -114,7 +146,7 @@ class TransactionDetailsCard extends StatelessWidget {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE7F8EF),
+                    color: _statusColor(status).withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: CustomText(
@@ -122,7 +154,7 @@ class TransactionDetailsCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF20A865),
+                          color: _statusColor(status),
                         ),
                   ),
                 ),
@@ -132,6 +164,27 @@ class TransactionDetailsCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _statusColor(String status) {
+    switch (status.trim().toUpperCase()) {
+      case 'SUCCESS':
+      case 'SUCCESSFUL':
+      case 'COMPLETED':
+        return const Color(0xFF20A865);
+
+      case 'PENDING':
+      case 'PROCESSING':
+        return Colors.orange;
+
+      case 'FAILED':
+      case 'REJECTED':
+      case 'CANCELLED':
+        return red;
+
+      default:
+        return textPrimary;
+    }
   }
 }
 
@@ -152,7 +205,9 @@ class TransactionDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 7.h),
+      padding: EdgeInsets.symmetric(
+        vertical: 7.h,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

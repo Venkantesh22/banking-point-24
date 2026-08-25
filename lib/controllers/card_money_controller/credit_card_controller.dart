@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/cal_real_time_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/initiation_withdrawal_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/withdrawal_model.dart';
 import 'package:lekra/data/models/response/response_model.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/credit_card_repo.dart';
@@ -221,6 +222,7 @@ class CreditCardController extends GetxController implements GetxService {
     return responseModel;
   }
 
+  InitiationWithdrawalModel? initiationWithdrawalModel;
   //* Call verify opt credit card creditCardOTPVerify()
   Future<ResponseModel> creditCardOTPVerify() async {
     log('----------- creditCardOTPVerify Called ----------');
@@ -241,6 +243,8 @@ class CreditCardController extends GetxController implements GetxService {
           await creditCardRepo.creditCardOTPVerify(data: FormData(data));
 
       if (response.statusCode == 200 && response.body['status'] == "success") {
+        initiationWithdrawalModel =
+            InitiationWithdrawalModel.fromJson(response.body['data']);
         responseModel = ResponseModel(
             true, response.body['message'] ?? " creditCardOTPVerify success");
       } else {

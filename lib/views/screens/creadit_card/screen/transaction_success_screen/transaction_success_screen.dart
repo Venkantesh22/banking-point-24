@@ -22,29 +22,30 @@ class TransactionSuccessScreen extends StatelessWidget {
       body: SafeArea(
         child: GetBuilder<CreditCardController>(
           builder: (creditCardController) {
+            final transaction =
+                creditCardController.initiationWithdrawalModel;
+
             return Stack(
               children: [
-                // =====================================================
-                // SCREEN CONTENT
-                // =====================================================
-
                 SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   padding: AppConstants.screenPadding,
                   child: Column(
                     children: [
                       const TransactionSuccessHeader(),
+
                       sizedBoxHeight(height: 24),
-                      const TransactionDetailsCard(),
+
+                      TransactionDetailsCard(
+                        transaction: transaction,
+                      ),
+
                       sizedBoxHeight(height: 20),
+
                       const SettlementOptions(),
                     ],
                   ),
                 ),
-
-                // =====================================================
-                // LOADING OVERLAY
-                // =====================================================
 
                 if (creditCardController.isLoading)
                   Positioned.fill(
