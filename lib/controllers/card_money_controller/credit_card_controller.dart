@@ -495,12 +495,45 @@ class CreditCardController extends GetxController implements GetxService {
     }
   }
 
-  // //* Call request and resend opt credit card fetchCreditCardTransactionList()
+  List<CreditCardTransactionModel> dashboardTransactionList = [];
+
+  Future<void> fetchDashboardTransactionList({
+    required String fromdate,
+    required String todate,
+  }) async {
+    dashboardTransactionList.clear();
+    isLoading = true;
+    update();
+
+    try {
+      final response = await creditCardRepo.fetchCreditCardTransactionList(
+        fromdate: fromdate,
+        todate: todate,
+        page: 1,
+        limit: 10,
+      );
+
+      if (response.statusCode == 200 && response.body['status'] == 'success') {
+        final List data = response.body['data'] ?? [];
+
+        dashboardTransactionList = data
+            .map(
+              (item) => CreditCardTransactionModel.fromJson(item),
+            )
+            .take(10)
+            .toList();
+      }
+    } catch (e) {
+      log('ERROR fetchDashboardTransactionList(): $e');
+    }
+    isLoading = false;
+    update();
+  }
+
+  //* Call request and resend opt credit card fetchCreditCardTransactionList()
 
   String creditCardTransactionFromDate = DateFormat('yyyy-MM-dd').format(
-    DateTime.now().subtract(
-      const Duration(days: 30),
-    ),
+    DateTime(2024, 1, 1),
   );
 
   String creditCardTransactionToDate = DateFormat('yyyy-MM-dd').format(

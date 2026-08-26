@@ -50,11 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
 
                   CreditCardTransactionListScreen(),
-                  // CheckCustomerKycScreen(),
-                  // TransactionHistoryScreen(
-                  //   fromDateValue: DateTime(2024, 1, 1),
-                  //   todateValue: getDateTime(),
-                  // ),
+
                 ],
               ),
 

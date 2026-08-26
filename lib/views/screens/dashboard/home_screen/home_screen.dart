@@ -4,17 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lekra/controllers/auth_controller.dart';
-import 'package:lekra/controllers/basic_controlller.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/controllers/dashboard_controller.dart';
 import 'package:lekra/controllers/kyc_controller/form_controller.dart';
-import 'package:lekra/controllers/report_contoller.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
-import 'package:lekra/services/date_formatters_and_converters.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/base/custom_image.dart';
 import 'package:lekra/views/base/shimmer.dart';
-import 'package:lekra/views/screens/auth_screens/login_screen.dart';
 import 'package:lekra/views/screens/dashboard/dashboard_screen.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/banner_image_section.dart';
 import 'package:lekra/views/screens/dashboard/home_screen/components/kyc_pending_card.dart';
@@ -42,28 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       log("initState tap");
 
-      final reportContro = Get.find<ReportController>();
       Get.find<FormController>().venderKycStatus();
 
-      final dateFormat = DateFormat('yyyy-MM-dd');
-
       if (widget.isReload) {
-        Get.find<ReportController>()
-            .fetchYesBankMerchantCollection(
-          fromdate: dateFormat.format(getDateTime()),
-          todate: dateFormat.format(getDateTime()),
-        )
-            .then((value) {
-          if (value.isSuccess) {
-            reportContro.convertTODataForGraph(
-                reportContro.yesBankMerchantCollectionList);
-          }
-        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final controller = Get.find<CreditCardController>();
 
-        reportContro.fetchTransactionReport(
-            fromdate: dateFormat.format(getDateTime()),
-            todate: dateFormat.format(getDateTime()),
-            isShowOnly10: true);
+          controller.fetchDashboardTransactionList(
+            fromdate: DateFormat('yyyy-MM-dd').format(
+              DateTime.now(),
+            ),
+            todate: DateFormat('yyyy-MM-dd').format(
+              DateTime.now(),
+            ),
+          );
+        });
       }
     });
   }
@@ -219,6 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // ==================================================
 
                 const TransactionHistoryWidget(),
+                SizedBox(height: 40.h),
               ],
             ),
           );
