@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lekra/views/base/shimmer.dart';
 import 'package:pinput/pinput.dart';
 
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
@@ -126,13 +127,15 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
                   ),
 
                   sizedBoxHeight(height: 4),
-
-                  CustomText(
-                    '+91 98765 43210',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                      color: primaryColor,
+                  CustomShimmer(
+                    isLoading: creditCardController.isLoading,
+                    child: CustomText(
+                      "+91 ${creditCardController.withdrawalModel?.customerMobile ?? "-"}",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: primaryColor,
+                      ),
                     ),
                   ),
 

@@ -42,47 +42,7 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
     });
   }
 
-  bool _validateWithdrawalAmount(
-    CreditCardController controller,
-  ) {
-    final amount = double.tryParse(
-      controller.amountController.text.trim(),
-    );
 
-    final charges = controller.creditCardChargesModelList;
-    final charge = charges.isNotEmpty ? charges.first : null;
-
-    final minAmount = charge?.minAmount ?? 0;
-    final maxAmount = charge?.maxAmount ?? 0;
-
-    if (amount == null || amount <= 0) {
-      showToast(
-        message: 'Please enter a valid withdrawal amount',
-        toastType: ToastType.warning,
-      );
-      return false;
-    }
-
-    if (amount < minAmount) {
-      showToast(
-        message:
-            'Minimum withdrawal amount is ₹${minAmount.toStringAsFixed(0)}',
-        toastType: ToastType.warning,
-      );
-      return false;
-    }
-
-    if (amount > maxAmount) {
-      showToast(
-        message:
-            'Maximum withdrawal amount is ₹${maxAmount.toStringAsFixed(0)}',
-        toastType: ToastType.warning,
-      );
-      return false;
-    }
-
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
