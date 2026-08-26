@@ -16,7 +16,7 @@ import 'package:lekra/views/screens/creadit_card/screen/withdraw_money_screen/wi
 import 'package:lekra/views/screens/widget/text_box/app_text_box.dart';
 
 class CheckCustomerKycScreen extends StatefulWidget {
-  CheckCustomerKycScreen({
+  const CheckCustomerKycScreen({
     super.key,
   });
 
@@ -44,16 +44,7 @@ class _CheckCustomerKycScreenState extends State<CheckCustomerKycScreen> {
           appBar: AppBar(
             backgroundColor: white,
             elevation: 0,
-            leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20.r,
-                color: const Color(0xFF101B5C),
-              ),
-            ),
+
             title: CustomText(
               'Check Customer KYC',
               style: TextStyle(
