@@ -8,6 +8,7 @@ import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transact
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
+import 'package:lekra/views/base/shimmer.dart';
 import 'package:lekra/views/screens/creadit_card/screen/credit_card_transaction_list_screen/creadit_card_transaction_details_screen.dart';
 
 class CreditCardTransactionListScreen extends StatefulWidget {
@@ -169,31 +170,26 @@ class _CreditCardTransactionListScreenState
 
                 final transaction = transactions[index];
 
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 12.h,
-                  ),
-                  child: _TransactionCard(
-                    transaction: transaction,
-                    onTap: () {
-                      controller
-                          .creditCardCashWithdrawalTransactionDetails(
-                              transactionId: transaction.transactionId)
-                          .then((value) {
-                        if (value.isSuccess) {
-                          navigate(
-                              context: context,
-                              page: CreditCardCashWithdrawalTransactionDetailsScreen(
-                                  transaction: controller
-                                          .creditCardCashWithdrawalTransactionDetailsModel ??
-                                      CreditCardCashWithdrawalTransactionDetailsModel()));
-                        } else {
-                          showToast(
-                              message: value.message,
-                              typeCheck: value.isSuccess);
+                return CustomShimmer(
+                  isLoading: controller.isLoading,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 12.h,
+                    ),
+                    child: _TransactionCard(
+                      transaction: transaction,
+                      onTap: () {
+                        if (controller.isLoading) {
+                          return;
                         }
-                      });
-                    },
+                        navigate(
+                            context: context,
+                            page:
+                                CreditCardCashWithdrawalTransactionDetailsScreen(
+                              transactionId: transaction.transactionId ?? "",
+                            ));
+                      },
+                    ),
                   ),
                 );
               },

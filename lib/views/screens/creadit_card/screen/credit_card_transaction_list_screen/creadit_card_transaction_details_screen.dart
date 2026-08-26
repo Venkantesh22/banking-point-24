@@ -1,105 +1,171 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_details_model.dart';
 
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
+import 'package:lekra/views/base/shimmer.dart';
 
-class CreditCardCashWithdrawalTransactionDetailsScreen
-    extends StatelessWidget {
+class CreditCardCashWithdrawalTransactionDetailsScreen extends StatefulWidget {
+  final String transactionId;
   const CreditCardCashWithdrawalTransactionDetailsScreen({
     super.key,
-    required this.transaction,
+    required this.transactionId,
   });
 
-  final CreditCardCashWithdrawalTransactionDetailsModel transaction;
+  @override
+  State<CreditCardCashWithdrawalTransactionDetailsScreen> createState() =>
+      _CreditCardCashWithdrawalTransactionDetailsScreenState();
+}
+
+class _CreditCardCashWithdrawalTransactionDetailsScreenState
+    extends State<CreditCardCashWithdrawalTransactionDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<CreditCardController>()
+          .creditCardCashWithdrawalTransactionDetails(
+              transactionId: widget.transactionId)
+          .then((value) {
+        if (value.isSuccess) {
+        } else {
+          showToast(message: value.message, typeCheck: value.isSuccess);
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _statusColor(transaction);
-    final statusText = _statusText(transaction);
-
-    return Scaffold(
-      backgroundColor: backgroundLight,
-      appBar: AppBar(
-        backgroundColor: white,
-        elevation: 0.5,
-        centerTitle: true,
-        title: CustomText(
-          'Transaction Details',
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: textPrimary,
+    return GetBuilder<CreditCardController>(builder: (creditCardController) {
+      final statusColor = _statusColor(creditCardController
+              .creditCardCashWithdrawalTransactionDetailsModel ??
+          CreditCardCashWithdrawalTransactionDetailsModel());
+      final statusText = _statusText(creditCardController
+              .creditCardCashWithdrawalTransactionDetailsModel ??
+          CreditCardCashWithdrawalTransactionDetailsModel());
+      return Scaffold(
+        backgroundColor: backgroundLight,
+        appBar: AppBar(
+          backgroundColor: white,
+          elevation: 0.5,
+          centerTitle: true,
+          title: CustomText(
+            'Transaction Details',
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(
-          16.w,
-          16.h,
-          16.w,
-          30.h,
-        ),
-        child: Column(
-          children: [
-            _TransactionHeader(
-              transaction: transaction,
-              statusColor: statusColor,
-              statusText: statusText,
-            ),
-
-            sizedBoxHeight(height: 16),
-
-            _AmountCard(
-              transaction: transaction,
-              statusColor: statusColor,
-            ),
-
-            sizedBoxHeight(height: 16),
-
-            _DestinationCard(
-              transaction: transaction,
-            ),
-
-            sizedBoxHeight(height: 16),
-
-            _TransactionInformationCard(
-              transaction: transaction,
-            ),
-
-            sizedBoxHeight(height: 16),
-
-            _CardInformationCard(
-              transaction: transaction,
-            ),
-
-            if (transaction.isTransactionFailed &&
-                transaction.failureReason != null &&
-                transaction.failureReason!.trim().isNotEmpty) ...[
-              sizedBoxHeight(height: 16),
-              _FailureCard(
-                reason: transaction.failureReason!,
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(
+            16.w,
+            16.h,
+            16.w,
+            30.h,
+          ),
+          child: Column(
+            children: [
+              CustomShimmer(
+                isLoading: creditCardController.isLoading,
+                child: _TransactionHeader(
+                  transaction: creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel ??
+                      CreditCardCashWithdrawalTransactionDetailsModel(),
+                  statusColor: statusColor,
+                  statusText: statusText,
+                ),
               ),
-            ],
-
-            if (transaction.settlementTime != null ||
-                transaction.formattedSettlementTime != null) ...[
               sizedBoxHeight(height: 16),
-              _TimelineCard(
-                transaction: transaction,
+              CustomShimmer(
+                isLoading: creditCardController.isLoading,
+                child: _AmountCard(
+                  transaction: creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel ??
+                      CreditCardCashWithdrawalTransactionDetailsModel(),
+                  statusColor: statusColor,
+                ),
               ),
+              sizedBoxHeight(height: 16),
+              CustomShimmer(
+                isLoading: creditCardController.isLoading,
+                child: _DestinationCard(
+                  transaction: creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel ??
+                      CreditCardCashWithdrawalTransactionDetailsModel(),
+                ),
+              ),
+              sizedBoxHeight(height: 16),
+              CustomShimmer(
+                isLoading: creditCardController.isLoading,
+                child: _TransactionInformationCard(
+                  transaction: creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel ??
+                      CreditCardCashWithdrawalTransactionDetailsModel(),
+                ),
+              ),
+              sizedBoxHeight(height: 16),
+              CustomShimmer(
+                isLoading: creditCardController.isLoading,
+                child: _CardInformationCard(
+                  transaction: creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel ??
+                      CreditCardCashWithdrawalTransactionDetailsModel(),
+                ),
+              ),
+              if ((creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel
+                          ?.isTransactionFailed ??
+                      false) &&
+                  (creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel
+                          ?.failureReason) !=
+                      null &&
+                  ((creditCardController
+                              .creditCardCashWithdrawalTransactionDetailsModel
+                              ?.failureReason ??
+                          "")
+                      .isNotEmpty)) ...[
+                sizedBoxHeight(height: 16),
+                _FailureCard(
+                  reason: creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel
+                          ?.failureReason ??
+                      "-",
+                ),
+              ],
+              if (creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel
+                          ?.settlementTime !=
+                      null ||
+                  creditCardController
+                          .creditCardCashWithdrawalTransactionDetailsModel
+                          ?.formattedSettlementTime !=
+                      null) ...[
+                sizedBoxHeight(height: 16),
+                CustomShimmer(
+                  isLoading: creditCardController.isLoading,
+                  child: _TimelineCard(
+                    transaction: creditCardController
+                            .creditCardCashWithdrawalTransactionDetailsModel ??
+                        CreditCardCashWithdrawalTransactionDetailsModel(),
+                  ),
+                ),
+              ],
+              sizedBoxHeight(height: 12),
+              _SupportNote(),
             ],
-
-            sizedBoxHeight(height: 12),
-
-            _SupportNote(),
-          ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -143,9 +209,7 @@ class _TransactionHeader extends StatelessWidget {
             transaction: transaction,
             size: 64,
           ),
-
           sizedBoxHeight(height: 12),
-
           CustomText(
             transaction.title ?? _typeTitle(transaction),
             textAlign: TextAlign.center,
@@ -155,22 +219,16 @@ class _TransactionHeader extends StatelessWidget {
               color: textPrimary,
             ),
           ),
-
           sizedBoxHeight(height: 5),
-
           CustomText(
-            transaction.transactionId ??
-                transaction.transId ??
-                '-',
+            transaction.transactionId ?? transaction.transId ?? '-',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 11.sp,
               color: greyText2,
             ),
           ),
-
           sizedBoxHeight(height: 12),
-
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: 12.w,
@@ -253,21 +311,16 @@ class _AmountCard extends StatelessWidget {
               color: white.withValues(alpha: 0.80),
             ),
           ),
-
           sizedBoxHeight(height: 6),
-
           CustomText(
-            transaction.formattedAmount ??
-                transaction.displayAmount,
+            transaction.formattedAmount ?? transaction.displayAmount,
             style: TextStyle(
               fontSize: 28.sp,
               fontWeight: FontWeight.w800,
               color: white,
             ),
           ),
-
           sizedBoxHeight(height: 14),
-
           Row(
             children: [
               Expanded(
@@ -389,7 +442,6 @@ class _DestinationCard extends StatelessWidget {
             value: transaction.displayRecipient,
           ),
         ],
-
         if (transaction.isUpi) ...[
           _DetailRow(
             label: 'Recipient',
@@ -397,12 +449,9 @@ class _DestinationCard extends StatelessWidget {
           ),
           _DetailRow(
             label: 'UPI ID',
-            value: transaction.destinationUpiId ??
-                transaction.upiId ??
-                '-',
+            value: transaction.destinationUpiId ?? transaction.upiId ?? '-',
           ),
         ],
-
         if (transaction.isBank) ...[
           _DetailRow(
             label: 'Bank',
@@ -420,9 +469,7 @@ class _DestinationCard extends StatelessWidget {
           ),
           _DetailRow(
             label: 'IFSC',
-            value: transaction.destinationIfsc ??
-                transaction.ifsc ??
-                '-',
+            value: transaction.destinationIfsc ?? transaction.ifsc ?? '-',
           ),
         ],
       ],
@@ -449,10 +496,7 @@ class _TransactionInformationCard extends StatelessWidget {
       children: [
         _DetailRow(
           label: 'Transaction ID',
-          value:
-              transaction.transactionId ??
-                  transaction.transId ??
-                  '-',
+          value: transaction.transactionId ?? transaction.transId ?? '-',
           copyable: true,
         ),
         _DetailRow(
@@ -524,9 +568,7 @@ class _CardInformationCard extends StatelessWidget {
         ),
         _DetailRow(
           label: 'Card Holder',
-          value: transaction.cardHolderName ??
-              transaction.customerName ??
-              '-',
+          value: transaction.cardHolderName ?? transaction.customerName ?? '-',
         ),
       ],
     );
@@ -546,8 +588,7 @@ class _TimelineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasSettlement =
-        transaction.formattedSettlementTime != null ||
+    final hasSettlement = transaction.formattedSettlementTime != null ||
         transaction.settlementTime != null;
 
     return _SectionCard(
@@ -563,15 +604,13 @@ class _TimelineCard extends StatelessWidget {
               '-',
           color: primaryColor,
         ),
-
         if (hasSettlement)
           _TimelineRow(
             icon: Icons.check_circle_outline,
             title: 'Settlement',
-            value:
-                transaction.formattedSettlementTime ??
-                    transaction.settlementTime ??
-                    '-',
+            value: transaction.formattedSettlementTime ??
+                transaction.settlementTime ??
+                '-',
             color: const Color(0xFF20A865),
           ),
       ],
@@ -708,9 +747,7 @@ class _SectionCard extends StatelessWidget {
               ),
             ],
           ),
-
           SizedBox(height: 8.h),
-
           ...List.generate(
             children.length,
             (index) {
@@ -781,8 +818,7 @@ class _DetailRow extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (copyable &&
-                    value != '-') ...[
+                if (copyable && value != '-') ...[
                   SizedBox(width: 6.w),
                   Icon(
                     Icons.copy_outlined,
@@ -993,8 +1029,7 @@ String _statusText(
 Color _statusColor(
   CreditCardCashWithdrawalTransactionDetailsModel transaction,
 ) {
-  if (transaction.isCashDisbursed ||
-      transaction.isSettlementSuccess) {
+  if (transaction.isCashDisbursed || transaction.isSettlementSuccess) {
     return const Color(0xFF20A865);
   }
 
