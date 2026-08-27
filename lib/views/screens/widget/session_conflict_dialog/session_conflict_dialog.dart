@@ -1,12 +1,58 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-class SessionConflictDialog extends StatelessWidget {
+class SessionConflictDialog extends StatefulWidget {
   final VoidCallback onLogout;
 
   const SessionConflictDialog({
     super.key,
     required this.onLogout,
   });
+
+  @override
+  State<SessionConflictDialog> createState() =>
+      _SessionConflictDialogState();
+}
+
+class _SessionConflictDialogState extends State<SessionConflictDialog> {
+  int remainingSeconds = 3;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        if (!mounted) {
+          timer.cancel();
+          return;
+        }
+
+        if (remainingSeconds > 1) {
+          setState(() {
+            remainingSeconds--;
+          });
+        } else {
+          timer.cancel();
+
+          // Close this dialog first.
+          Navigator.of(context).pop();
+
+          // Then logout.
+          widget.onLogout();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +88,10 @@ class SessionConflictDialog extends StatelessWidget {
             ),
           ],
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Your account has been logged in on another mobile device using the same login credentials.',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -53,14 +99,34 @@ class SessionConflictDialog extends StatelessWidget {
                 height: 1.5,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 20),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: child,
+                );
+              },
+              child: Text(
+                '$remainingSeconds',
+                key: ValueKey(remainingSeconds),
+                style: const TextStyle(
+                  fontSize: 44,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
             Text(
-              'For your security, you will be logged out automatically in 3 seconds.',
+              remainingSeconds == 1
+                  ? 'Logging out...'
+                  : 'Logging out automatically',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
-                height: 1.4,
               ),
             ),
           ],
@@ -75,7 +141,13 @@ class SessionConflictDialog extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onLogout,
+              onPressed: () {
+                _timer?.cancel();
+
+                Navigator.of(context).pop();
+
+                widget.onLogout();
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   vertical: 14,

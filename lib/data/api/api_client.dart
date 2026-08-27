@@ -343,21 +343,21 @@ class ApiClient extends GetConnect implements GetxService {
       // ============================================================
 
       if (response.body is Map) {
-        final Map<String, dynamic> responseBody =
-            Map<String, dynamic>.from(response.body);
+  final Map<String, dynamic> responseBody =
+      Map<String, dynamic>.from(response.body);
 
-        final bool? authorisedStatus =
-            responseBody['authorised_status'] as bool?;
+  final authorisedStatus =
+      responseBody['authorised_status'];
 
-        if (authorisedStatus == false) {
-          log(
-            'authorised_status=false detected in POST response.',
-            name: 'AUTHORIZATION',
-          );
+  if (authorisedStatus == false) {
+    log(
+      'authorised_status=false detected in POST response.',
+      name: 'AUTHORIZATION',
+    );
 
-          await _showSessionConflictDialog();
-        }
-      }
+    await _showSessionConflictDialog();
+  }
+}
 
       // ------------------------------------------------------------
       // HANDLE RESPONSE
@@ -566,75 +566,71 @@ class ApiClient extends GetConnect implements GetxService {
   }
 
   Future<void> _showSessionConflictDialog() async {
-    if (_sessionConflictDialogShowing) {
-      return;
-    }
+  if (_sessionConflictDialogShowing) {
+    return;
+  }
 
-    _sessionConflictDialogShowing = true;
+  _sessionConflictDialogShowing = true;
 
-    Timer? timer;
+  log(
+    'Opening SessionConflictDialog',
+    name: 'AUTHORIZATION',
+  );
 
-    try {
-      final context = navigatorKey.currentContext;
+  try {
+    final context = navigatorKey.currentState?.overlay?.context;
 
-      if (context == null) {
-        _sessionConflictDialogShowing = false;
-        return;
-      }
-
-      bool logoutStarted = false;
-
-      Future<void> logoutUser() async {
-        if (logoutStarted) return;
-
-        logoutStarted = true;
-        timer?.cancel();
-
-        if (navigatorKey.currentState?.canPop() ?? false) {
-          navigatorKey.currentState?.pop();
-        }
-
-        await Future.delayed(
-          const Duration(milliseconds: 100),
-        );
-
-        final logoutContext = navigatorKey.currentContext;
-
-        if (logoutContext != null && Get.isRegistered<AuthController>()) {
-          final authController = Get.find<AuthController>();
-
-          await authController.logout(logoutContext);
-        }
-      }
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) {
-          return SessionConflictDialog(
-            onLogout: logoutUser,
-          );
-        },
-      );
-
-      // Auto logout after 3 seconds.
-      timer = Timer(
-        const Duration(seconds: 3),
-        () async {
-          await logoutUser();
-        },
-      );
-    } catch (e, stackTrace) {
+    if (context == null) {
       log(
-        'Error showing session conflict dialog: '
-        '$e\n$stackTrace',
+        'Navigator overlay context is NULL',
         name: 'AUTHORIZATION',
       );
 
-      timer?.cancel();
-    } finally {
-      // Do NOT set this to false immediately here because
-      // showDialog() is still open.
+      _sessionConflictDialogShowing = false;
+      return;
     }
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (dialogContext) {
+        log(
+          'SessionConflictDialog builder called',
+          name: 'AUTHORIZATION',
+        );
+
+        return SessionConflictDialog(
+          onLogout: () async {
+            log(
+              'SessionConflictDialog requested logout',
+              name: 'AUTHORIZATION',
+            );
+
+            final logoutContext =
+                navigatorKey.currentState?.overlay?.context;
+
+            if (logoutContext != null &&
+                Get.isRegistered<AuthController>()) {
+              final authController =
+                  Get.find<AuthController>();
+
+              await authController.logout(logoutContext);
+            }
+
+            _sessionConflictDialogShowing = false;
+          },
+        );
+      },
+    );
+  } catch (e, stackTrace) {
+    log(
+      'Error showing SessionConflictDialog: '
+      '$e\n$stackTrace',
+      name: 'AUTHORIZATION',
+    );
+
+    _sessionConflictDialogShowing = false;
   }
+}
 }
