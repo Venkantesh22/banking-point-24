@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/cash_card_withdrawal_kyc_status_model.dart';
 import 'package:lekra/data/models/cash%20withdrawal%20model/check_custom_kyc_model.dart';
-import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_transaction_model.dart';
 import 'package:lekra/data/models/response/response_model.dart';
 import 'package:lekra/data/repositories/card_withdrawal_repo/custom_kyc_repo.dart';
 import 'package:lekra/services/constants.dart';

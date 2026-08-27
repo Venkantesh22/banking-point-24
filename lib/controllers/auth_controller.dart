@@ -101,7 +101,7 @@ class AuthController extends GetxController implements GetxService {
         }
 
         responseModel = ResponseModel(
-            false, errorMessage ?? "Error while registering user");
+            false, errorMessage );
       }
     } catch (e) {
       log('ERROR AT registerUser(): $e');
