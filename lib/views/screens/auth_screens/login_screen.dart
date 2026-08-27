@@ -34,8 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .requestLocationPermissionAndFetch(context);
 
       final AuthController authController = Get.find<AuthController>();
-      // authController.phoneNumberController.clear();
-      // authController.passwordController.clear();
+      authController.phoneNumberController.clear();
+      authController.passwordController.clear();
       authController.update();
     });
   }
