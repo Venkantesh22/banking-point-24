@@ -32,9 +32,11 @@ class AuthController extends GetxController implements GetxService {
 
   bool get acceptTerms => _acceptTerms;
 
-  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController phoneNumberController =
+      TextEditingController(text: "8926600327");
   final TextEditingController oldPasswordController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordController =
+      TextEditingController(text: "Ajeet@123");
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
@@ -155,7 +157,6 @@ class AuthController extends GetxController implements GetxService {
     final saveFCMToken = await authRepo.saveFCMToken(fcmToken: fcmToken);
     log('loginUser: saved FCM token: $saveFCMToken');
   }
-  
 
   MerchantCollectionModel? merchantCollectionModel;
   CompanyModel? companyModel;
@@ -542,16 +543,29 @@ class AuthController extends GetxController implements GetxService {
   Future<void> logout(BuildContext context) async {
     log('----------- logout Called ----------');
 
+    _isLoading = true;
     update();
-    try {
-      authRepo.clearSharedData();
-      navigate(context: context, page: const LoginScreen());
-    } catch (e) {
-      log("****** Error in logout() ******", name: "logout");
-    }
 
-    _isLoading = false;
-    update();
+    try {
+      await authRepo.clearSharedData();
+
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => const LoginScreen(),
+          ),
+          (route) => false,
+        );
+      }
+    } catch (e, stackTrace) {
+      log(
+        '$e\n$stackTrace',
+        name: "ERROR AT logout",
+      );
+    } finally {
+      _isLoading = false;
+      update();
+    }
   }
 
   ServiceModel? selectServiceModel;
