@@ -11,6 +11,7 @@ import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/base/common_button.dart';
+import 'package:lekra/views/screens/creadit_card/screen/transaction_charges_screen/transaction_charges_screen.dart';
 import 'package:lekra/views/screens/creadit_card/screen/withdraw_money_screen/widget/expiry_dateInput_formatter.dart';
 import 'package:lekra/views/screens/creadit_card/screen/withdraw_verify_otp_screen/withdraw_verify_otp_screen.dart';
 import 'package:lekra/views/screens/widget/text_box/app_text_box.dart';
@@ -513,6 +514,80 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                   ],
                 ),
               ),
+              sizedBoxHeight(height: 12),
+              CustomButton(
+                type: ButtonType.tertiary,
+                onTap: () {
+                  navigate(
+                    context: context,
+                    page: const TransactionChargesScreen(),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 10.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryColorLight,
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(
+                      color: primaryColor.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 32.w,
+                        height: 32.w,
+                        decoration: BoxDecoration(
+                          color: white,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Icon(
+                          Icons.receipt_long_outlined,
+                          size: 18.r,
+                          color: primaryColor,
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              'View Transaction Charges',
+                              style: Helper(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: primaryColor,
+                                  ),
+                            ),
+                            SizedBox(height: 2.h),
+                            CustomText(
+                              'See applicable fees and charges',
+                              style:
+                                  Helper(context).textTheme.bodySmall?.copyWith(
+                                        fontSize: 9.sp,
+                                        color: greyText2,
+                                      ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 14.r,
+                        color: primaryColor,
+                      ),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         );
