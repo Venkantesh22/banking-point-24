@@ -190,14 +190,14 @@ class _ChargeSummaryCard extends StatelessWidget {
               Expanded(
                 child: _SummaryItem(
                   title: 'Minimum',
-                  value: '₹${(minAmount ?? 0).toStringAsFixed(0)}',
+                  value: PriceConverter.convertToNumberFormat(minAmount ?? 0.0),
                 ),
               ),
               SizedBox(width: 10.w),
               Expanded(
                 child: _SummaryItem(
                   title: 'Maximum',
-                  value: '₹${(maxAmount ?? 0).toStringAsFixed(0)}',
+                  value: PriceConverter.convertToNumberFormat(maxAmount ?? 0.0),
                 ),
               ),
               SizedBox(width: 10.w),
@@ -238,7 +238,7 @@ class _SummaryItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          CustomText(
             title,
             style: TextStyle(
               fontSize: 10.sp,
@@ -246,7 +246,7 @@ class _SummaryItem extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(
+          CustomText(
             value,
             style: TextStyle(
               fontSize: 13.sp,
@@ -279,9 +279,7 @@ class _ChargeSlabCard extends StatelessWidget {
         ? '${chargeValue.toStringAsFixed(
             chargeValue % 1 == 0 ? 0 : 2,
           )}%'
-        : '₹${chargeValue.toStringAsFixed(
-            chargeValue % 1 == 0 ? 0 : 2,
-          )}';
+        : PriceConverter.convertToNumberFormat(chargeValue);
 
     final String chargeDescription = charge.isPercent
         ? '$chargeText of withdrawal amount + GST'
@@ -364,7 +362,7 @@ class _ChargeSlabCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 5.w),
-                    Text(
+                    CustomText(
                       'Active',
                       style: TextStyle(
                         fontSize: 9.sp,
@@ -389,7 +387,7 @@ class _ChargeSlabCard extends StatelessWidget {
                 child: _ChargeInfo(
                   title: 'Withdrawal Range',
                   value:
-                      '₹${min.toStringAsFixed(0)} - ₹${max.toStringAsFixed(0)}',
+                      '${PriceConverter.convertToNumberFormat(min)} - ₹${PriceConverter.convertToNumberFormat(max)}',
                 ),
               ),
               Container(
@@ -426,7 +424,7 @@ class _ChargeSlabCard extends StatelessWidget {
                 ),
                 SizedBox(width: 7.w),
                 Expanded(
-                  child: Text(
+                  child: CustomText(
                     chargeDescription,
                     style: TextStyle(
                       fontSize: 10.sp,
@@ -463,7 +461,7 @@ class _ChargeInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          CustomText(
             title,
             style: TextStyle(
               fontSize: 9.sp,
@@ -471,7 +469,7 @@ class _ChargeInfo extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(
+          CustomText(
             value,
             style: TextStyle(
               fontSize: 13.sp,
@@ -517,7 +515,7 @@ class _GstInfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                CustomText(
                   'GST Information',
                   style: TextStyle(
                     fontSize: 12.sp,
@@ -526,7 +524,7 @@ class _GstInfoCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                CustomText(
                   'GST of ${gstPercentage.toStringAsFixed(0)}% '
                   'is applicable on the processing fee.',
                   style: TextStyle(
@@ -565,7 +563,7 @@ class _EmptyChargesCard extends StatelessWidget {
             color: grey,
           ),
           SizedBox(height: 10.h),
-          Text(
+          CustomText(
             'No active charges available',
             style: TextStyle(
               fontSize: 13.sp,
@@ -574,7 +572,7 @@ class _EmptyChargesCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(
+          CustomText(
             'Please try again later.',
             style: TextStyle(
               fontSize: 11.sp,
