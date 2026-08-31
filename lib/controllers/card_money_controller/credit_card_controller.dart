@@ -366,60 +366,57 @@ class CreditCardController extends GetxController implements GetxService {
     return responseModel;
   }
 
-  List<CreditCardChargesModel> creditCardChargesModelList = [];
-  Future<ResponseModel> fetchCreditCardCharges() async {
-    log('----------- fetchCreditCardCharges Called ----------');
+  CreditCardChargesModel? creditCardChargesModel;
 
-    isLoading = true;
-    update();
+Future<ResponseModel> fetchCreditCardCharges() async {
+  log('----------- fetchCreditCardCharges Called ----------');
 
-    try {
-      final Response response = await creditCardRepo.fetchCreditCardCharges();
+  isLoading = true;
+  update();
 
-      if (response.statusCode == 200 &&
-          response.body is Map &&
-          response.body['success'] == true) {
-        final data = response.body['data'];
+  try {
+    final Response response =
+        await creditCardRepo.fetchCreditCardCharges();
 
-        if (data is List) {
-          creditCardChargesModelList = data
-              .map(
-                (e) => CreditCardChargesModel.fromJson(
-                  Map<String, dynamic>.from(e),
-                ),
-              )
-              .toList();
-        } else {
-          creditCardChargesModelList = [];
-        }
+    if (response.statusCode == 200 &&
+        response.body is Map &&
+        response.body['success'] == true) {
+      final Map<String, dynamic> body =
+          Map<String, dynamic>.from(response.body);
 
-        return ResponseModel(
-          true,
-          response.body['message'] ?? 'fetchCreditCardCharges success',
-        );
-      }
+      creditCardChargesModel =
+          CreditCardChargesModel.fromJson(body);
 
       return ResponseModel(
-        false,
-        response.body is Map
-            ? response.body['message'] ?? 'Error while fetchCreditCardCharges'
-            : response.statusText ?? 'Error while fetchCreditCardCharges',
+        true,
+        body['message']?.toString() ??
+            'fetchCreditCardCharges success',
       );
-    } catch (e, stackTrace) {
-      log(
-        'ERROR AT fetchCreditCardCharges(): $e',
-        stackTrace: stackTrace,
-      );
-
-      return ResponseModel(
-        false,
-        'Error while fetchCreditCardCharges: $e',
-      );
-    } finally {
-      isLoading = false;
-      update();
     }
+
+    return ResponseModel(
+      false,
+      response.body is Map
+          ? response.body['message']?.toString() ??
+              'Error while fetchCreditCardCharges'
+          : response.statusText ??
+              'Error while fetchCreditCardCharges',
+    );
+  } catch (e, stackTrace) {
+    log(
+      'ERROR AT fetchCreditCardCharges(): $e',
+      stackTrace: stackTrace,
+    );
+
+    return ResponseModel(
+      false,
+      'Error while fetchCreditCardCharges: $e',
+    );
+  } finally {
+    isLoading = false;
+    update();
   }
+}
 
   bool isCalculatingCharge = false;
   CalRealTimeCharges? calRealTimeCharges;

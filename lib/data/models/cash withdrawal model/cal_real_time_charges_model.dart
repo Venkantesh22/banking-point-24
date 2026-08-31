@@ -1,12 +1,12 @@
 class CalRealTimeCharges {
-  final int? withdrawalAmount;
-  final int? processingFee;
+  final double? withdrawalAmount;
+  final double? processingFee;
   final double? gst;
-  final int? gstPercentage;
+  final double? gstPercentage;
   final double? totalCardDebit;
-  final int? netAmount;
+  final double? netAmount;
   final String? chargeType;
-  final int? chargeValue;
+  final double? chargeValue;
   final int? chargeRuleId;
   final bool? isCustomUserCharge;
 
@@ -23,30 +23,60 @@ class CalRealTimeCharges {
     this.isCustomUserCharge,
   });
 
-  factory CalRealTimeCharges.fromJson(Map<String, dynamic> json) =>
-      CalRealTimeCharges(
-        withdrawalAmount: json["withdrawal_amount"],
-        processingFee: json["processing_fee"],
-        gst: json["gst"]?.toDouble(),
-        gstPercentage: json["gst_percentage"],
-        totalCardDebit: json["total_card_debit"]?.toDouble(),
-        netAmount: json["net_amount"],
-        chargeType: json["charge_type"],
-        chargeValue: json["charge_value"],
-        chargeRuleId: json["charge_rule_id"],
-        isCustomUserCharge: json["is_custom_user_charge"],
-      );
+  factory CalRealTimeCharges.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return CalRealTimeCharges(
+      withdrawalAmount:
+          (json['withdrawal_amount'] as num?)?.toDouble(),
 
-  Map<String, dynamic> toJson() => {
-        "withdrawal_amount": withdrawalAmount,
-        "processing_fee": processingFee,
-        "gst": gst,
-        "gst_percentage": gstPercentage,
-        "total_card_debit": totalCardDebit,
-        "net_amount": netAmount,
-        "charge_type": chargeType,
-        "charge_value": chargeValue,
-        "charge_rule_id": chargeRuleId,
-        "is_custom_user_charge": isCustomUserCharge,
-      };
+      processingFee:
+          (json['processing_fee'] as num?)?.toDouble(),
+
+      gst:
+          (json['gst'] as num?)?.toDouble(),
+
+      gstPercentage:
+          (json['gst_percentage'] as num?)?.toDouble(),
+
+      totalCardDebit:
+          (json['total_card_debit'] as num?)?.toDouble(),
+
+      netAmount:
+          (json['net_amount'] as num?)?.toDouble(),
+
+      chargeType:
+          json['charge_type']?.toString(),
+
+      chargeValue:
+          (json['charge_value'] as num?)?.toDouble(),
+
+      chargeRuleId:
+          (json['charge_rule_id'] as num?)?.toInt(),
+
+      isCustomUserCharge:
+          json['is_custom_user_charge'] as bool?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'withdrawal_amount': withdrawalAmount,
+      'processing_fee': processingFee,
+      'gst': gst,
+      'gst_percentage': gstPercentage,
+      'total_card_debit': totalCardDebit,
+      'net_amount': netAmount,
+      'charge_type': chargeType,
+      'charge_value': chargeValue,
+      'charge_rule_id': chargeRuleId,
+      'is_custom_user_charge': isCustomUserCharge,
+    };
+  }
+
+  bool get isPercent =>
+      chargeType?.toLowerCase() == 'percent';
+
+  bool get isFlat =>
+      chargeType?.toLowerCase() == 'flat';
 }

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/controllers/card_money_controller/custom_kyc_controller.dart';
+import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
@@ -39,10 +40,10 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
       controller.cvvController.clear();
       controller.cardHolderNameController.clear();
       controller.bankNameController.clear();
+      controller.calRealTimeCharges = null;
+      controller.update();
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +148,7 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
                             );
 
                             final charges =
-                                controller.creditCardChargesModelList;
+                                controller.creditCardChargesModel?.data ?? [];
 
                             final charge =
                                 charges.isNotEmpty ? charges.first : null;
@@ -264,56 +265,98 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
   void _onAmountChanged(
     String value,
     CreditCardController creditCardController,
-    double minAmount,
-    double maxAmount,
   ) {
-    // Cancel previous timer.
     _amountDebounce?.cancel();
 
     final amount = double.tryParse(value.trim());
 
-    // Clear calculation when invalid/empty.
+    // ------------------------------------------------------------
+    // EMPTY / INVALID
+    // ------------------------------------------------------------
+
     if (amount == null || amount <= 0) {
       creditCardController.calRealTimeCharges = null;
       creditCardController.update();
       return;
     }
 
-    // Minimum validation.
-    if (amount < minAmount) {
-      creditCardController.calRealTimeCharges = null;
-      creditCardController.update();
-      return;
-    }
+    // ------------------------------------------------------------
+    // MIN / MAX FROM API
+    // ------------------------------------------------------------
 
-    // Maximum validation.
-    if (amount > maxAmount) {
-      creditCardController.calRealTimeCharges = null;
-      creditCardController.update();
-      return;
-    }
+    final minAmount =
+        creditCardController.creditCardChargesModel?.minAmount ?? 0.0;
 
-    // Wait 2 seconds after the user stops typing.
+    final maxAmount =
+        creditCardController.creditCardChargesModel?.maxAmount ?? 0.0;
+
+    // ------------------------------------------------------------
+    // MINIMUM VALIDATION
+    // ------------------------------------------------------------
+
+    // ------------------------------------------------------------
+    // VALID AMOUNT
+    // ------------------------------------------------------------
+
     _amountDebounce = Timer(
-      const Duration(seconds: 2),
-      () {
+      const Duration(milliseconds: 1000),
+      () async {
         if (!mounted) {
           return;
         }
+        if (minAmount > 0 && amount < minAmount) {
+          creditCardController.calRealTimeCharges = null;
+          creditCardController.update();
 
-        // Make sure the value is still valid before API call.
+          showToast(
+            toastType: ToastType.warning,
+            message: 'Invalid Withdrawal Amount',
+            description:
+                'Minimum withdrawal amount is ₹${minAmount.toStringAsFixed(0)}',
+          );
+
+          return;
+        }
+
+        // ------------------------------------------------------------
+        // MAXIMUM VALIDATION
+        // ------------------------------------------------------------
+
+        if (maxAmount > 0 && amount > maxAmount) {
+          creditCardController.calRealTimeCharges = null;
+          creditCardController.update();
+
+          showToast(
+            toastType: ToastType.warning,
+            message: 'Invalid Withdrawal Amount',
+            description:
+                'Maximum withdrawal amount is ₹${maxAmount.toStringAsFixed(0)}',
+          );
+
+          return;
+        }
+
         final latestAmount = double.tryParse(
           controller.amountController.text.trim(),
         );
 
-        if (latestAmount == null ||
-            latestAmount <= 0 ||
-            latestAmount < minAmount ||
-            latestAmount > maxAmount) {
+        if (latestAmount == null || latestAmount <= 0) {
           return;
         }
 
-        creditCardController.calRealTimeCharge();
+        if (latestAmount < minAmount) {
+          return;
+        }
+
+        if (latestAmount > maxAmount) {
+          return;
+        }
+
+        debugPrint(
+          'Calling calRealTimeCharge() for: $latestAmount',
+        );
+
+        await creditCardController.calRealTimeCharge();
       },
     );
   }
@@ -322,13 +365,11 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
   Widget build(BuildContext context) {
     return GetBuilder<CreditCardController>(
       builder: (creditCardController) {
-        final charges = creditCardController.creditCardChargesModelList;
+        final double minAmount =
+            creditCardController.creditCardChargesModel?.minAmount ?? 0.00;
 
-        final charge = charges.isNotEmpty ? charges.first : null;
-
-        final minAmount = charge?.minAmount ?? 0;
-
-        final maxAmount = charge?.maxAmount ?? 0;
+        final maxAmount =
+            creditCardController.creditCardChargesModel?.maxAmount ?? 0.00;
 
         final realTimeCharge = creditCardController.calRealTimeCharges;
 
@@ -379,8 +420,6 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                   _onAmountChanged(
                     value,
                     creditCardController,
-                    minAmount.toDouble(),
-                    maxAmount.toDouble(),
                   );
                 },
                 validator: (value) {
@@ -406,22 +445,26 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                 },
               ),
               sizedBoxHeight(height: 12),
-              _amountRow(
-                'Min. Amount',
-                charges.isEmpty ? '-' : minAmount.toString(),
-              ),
+              _amountRow('Min. Amount', "₹${minAmount.toStringAsFixed(0)}"),
               _amountRow(
                 'Max. Amount',
-                charges.isEmpty ? '-' : maxAmount.toString(),
+                '₹${maxAmount.toStringAsFixed(0)}',
               ),
-              _amountRow(
-                'Processing Fee',
-                charge == null
-                    ? '-'
-                    : charge.isPercent
-                        ? '${charge.chargeValue}% + GST'
-                        : '${charge.chargeValue} flat + GST',
-              ),
+              controller.calRealTimeCharges != null
+                  ? _amountRow(
+                      'Processing Fee  ${(controller.calRealTimeCharges?.isPercent ?? false) ? "(${controller.calRealTimeCharges?.chargeValue ?? ""}%)" : ""}',
+                      controller.calRealTimeCharges == null
+                          ? "-"
+                          : '₹${controller.calRealTimeCharges?.processingFee?.toStringAsFixed(0)}',
+                    )
+                  : SizedBox(),
+              controller.calRealTimeCharges != null
+                  ? _amountRow(
+                      'GST  ${controller.calRealTimeCharges?.gstPercentage}%',
+                      controller.calRealTimeCharges == null
+                          ? "-"
+                          : '${controller.calRealTimeCharges?.gst ?? 0.0}%')
+                  : SizedBox(),
               sizedBoxHeight(height: 6),
               Container(
                 width: double.infinity,
@@ -487,15 +530,17 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
           CustomText(
             title,
             style: TextStyle(
-              fontSize: 10.sp,
+              fontSize: 11.sp,
+              letterSpacing: 0.2,
               color: const Color(0xFF27366F),
             ),
           ),
           CustomText(
             value,
             style: TextStyle(
-              fontSize: 10.sp,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
               color: const Color(0xFF101B5C),
             ),
           ),
