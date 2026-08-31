@@ -129,6 +129,7 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
                     GetBuilder<CustomKycController>(
                       builder: (customKycController) {
                         return CustomButton(
+                          isLoading: customKycController.isLoading,
                           title: 'Withdraw Money (Send OTP)',
                           height: 48.h,
                           radius: 8.r,
@@ -147,14 +148,12 @@ class _WithdrawMoneyScreenState extends State<WithdrawMoneyScreen> {
                               controller.amountController.text.trim(),
                             );
 
-                            final charges =
-                                controller.creditCardChargesModel?.data ?? [];
-
-                            final charge =
-                                charges.isNotEmpty ? charges.first : null;
-
-                            final minAmount = charge?.minAmount ?? 0;
-                            final maxAmount = charge?.maxAmount ?? 0;
+                            final minAmount =
+                                controller.creditCardChargesModel?.minAmount ??
+                                    0;
+                            final maxAmount =
+                                controller.creditCardChargesModel?.maxAmount ??
+                                    0;
 
                             if (amount == null || amount <= 0) {
                               showToast(
@@ -368,8 +367,14 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
         final double minAmount =
             creditCardController.creditCardChargesModel?.minAmount ?? 0.00;
 
-        final maxAmount =
+        final double maxAmount =
             creditCardController.creditCardChargesModel?.maxAmount ?? 0.00;
+
+        final String minAmountFormat =
+            creditCardController.creditCardChargesModel?.minAmountFormat ?? "-";
+
+        final String maxAmountFormat =
+            creditCardController.creditCardChargesModel?.maxAmountFormat ?? "-";
 
         final realTimeCharge = creditCardController.calRealTimeCharges;
 
@@ -445,17 +450,17 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                 },
               ),
               sizedBoxHeight(height: 12),
-              _amountRow('Min. Amount', "₹${minAmount.toStringAsFixed(0)}"),
+              _amountRow('Min. Amount', minAmountFormat),
               _amountRow(
                 'Max. Amount',
-                '₹${maxAmount.toStringAsFixed(0)}',
+                maxAmountFormat,
               ),
               controller.calRealTimeCharges != null
                   ? _amountRow(
                       'Processing Fee  ${(controller.calRealTimeCharges?.isPercent ?? false) ? "(${controller.calRealTimeCharges?.chargeValue ?? ""}%)" : ""}',
                       controller.calRealTimeCharges == null
                           ? "-"
-                          : '₹${controller.calRealTimeCharges?.processingFee?.toStringAsFixed(0)}',
+                          : '${controller.calRealTimeCharges?.processingFeeFormat}',
                     )
                   : SizedBox(),
               controller.calRealTimeCharges != null
@@ -463,7 +468,7 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                       'GST  ${controller.calRealTimeCharges?.gstPercentage}%',
                       controller.calRealTimeCharges == null
                           ? "-"
-                          : '${controller.calRealTimeCharges?.gst ?? 0.0}%')
+                          : '${controller.calRealTimeCharges?.gstFormat ?? 0.0}')
                   : SizedBox(),
               sizedBoxHeight(height: 6),
               Container(
@@ -499,7 +504,7 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                       CustomText(
                         realTimeCharge == null
                             ? '₹0.00'
-                            : '₹${(realTimeCharge.totalCardDebit ?? 0).toStringAsFixed(2)}',
+                            : realTimeCharge.totalCardDebitFormat,
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w700,

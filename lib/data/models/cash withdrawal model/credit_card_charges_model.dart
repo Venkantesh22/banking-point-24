@@ -1,3 +1,5 @@
+import 'package:lekra/services/constants.dart';
+
 class CreditCardChargesModel {
   final String? status;
   final bool? success;
@@ -24,22 +26,12 @@ class CreditCardChargesModel {
   ) {
     return CreditCardChargesModel(
       status: json['status']?.toString(),
-
       success: json['success'] as bool?,
-
       message: json['message']?.toString(),
-
       chargeScope: json['charge_scope']?.toString(),
-
-      defaultGstPercent:
-          (json['default_gst_percent'] as num?)?.toDouble(),
-
-      minAmount:
-          (json['min_amount'] as num?)?.toDouble(),
-
-      maxAmount:
-          (json['max_amount'] as num?)?.toDouble(),
-
+      defaultGstPercent: (json['default_gst_percent'] as num?)?.toDouble(),
+      minAmount: (json['min_amount'] as num?)?.toDouble(),
+      maxAmount: (json['max_amount'] as num?)?.toDouble(),
       data: json['data'] is List
           ? (json['data'] as List)
               .whereType<Map>()
@@ -65,6 +57,11 @@ class CreditCardChargesModel {
       'data': data.map((e) => e.toJson()).toList(),
     };
   }
+
+  String get minAmountFormat =>
+      PriceConverter.convertToNumberFormat(minAmount ?? 0.0);
+  String get maxAmountFormat =>
+      PriceConverter.convertToNumberFormat(maxAmount ?? 0.0);
 }
 
 class ChargeModel {
@@ -89,21 +86,11 @@ class ChargeModel {
   ) {
     return ChargeModel(
       id: (json['id'] as num?)?.toInt(),
-
-      minAmount:
-          (json['min_amount'] as num?)?.toDouble(),
-
-      maxAmount:
-          (json['max_amount'] as num?)?.toDouble(),
-
-      chargeType:
-          json['charge_type']?.toString(),
-
-      chargeValue:
-          (json['charge_value'] as num?)?.toDouble(),
-
-      status:
-          json['status']?.toString(),
+      minAmount: (json['min_amount'] as num?)?.toDouble(),
+      maxAmount: (json['max_amount'] as num?)?.toDouble(),
+      chargeType: json['charge_type']?.toString(),
+      chargeValue: (json['charge_value'] as num?)?.toDouble(),
+      status: json['status']?.toString(),
     );
   }
 
@@ -118,9 +105,7 @@ class ChargeModel {
     };
   }
 
-  bool get isPercent =>
-      chargeType?.toLowerCase() == 'percent';
+  bool get isPercent => chargeType?.toLowerCase() == 'percent';
 
-  bool get isFlat =>
-      chargeType?.toLowerCase() == 'flat';
+  bool get isFlat => chargeType?.toLowerCase() == 'flat';
 }

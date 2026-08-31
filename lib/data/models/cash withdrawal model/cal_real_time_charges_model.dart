@@ -1,3 +1,5 @@
+import 'package:lekra/services/constants.dart';
+
 class CalRealTimeCharges {
   final double? withdrawalAmount;
   final double? processingFee;
@@ -27,35 +29,16 @@ class CalRealTimeCharges {
     Map<String, dynamic> json,
   ) {
     return CalRealTimeCharges(
-      withdrawalAmount:
-          (json['withdrawal_amount'] as num?)?.toDouble(),
-
-      processingFee:
-          (json['processing_fee'] as num?)?.toDouble(),
-
-      gst:
-          (json['gst'] as num?)?.toDouble(),
-
-      gstPercentage:
-          (json['gst_percentage'] as num?)?.toDouble(),
-
-      totalCardDebit:
-          (json['total_card_debit'] as num?)?.toDouble(),
-
-      netAmount:
-          (json['net_amount'] as num?)?.toDouble(),
-
-      chargeType:
-          json['charge_type']?.toString(),
-
-      chargeValue:
-          (json['charge_value'] as num?)?.toDouble(),
-
-      chargeRuleId:
-          (json['charge_rule_id'] as num?)?.toInt(),
-
-      isCustomUserCharge:
-          json['is_custom_user_charge'] as bool?,
+      withdrawalAmount: (json['withdrawal_amount'] as num?)?.toDouble(),
+      processingFee: (json['processing_fee'] as num?)?.toDouble(),
+      gst: (json['gst'] as num?)?.toDouble(),
+      gstPercentage: (json['gst_percentage'] as num?)?.toDouble(),
+      totalCardDebit: (json['total_card_debit'] as num?)?.toDouble(),
+      netAmount: (json['net_amount'] as num?)?.toDouble(),
+      chargeType: json['charge_type']?.toString(),
+      chargeValue: (json['charge_value'] as num?)?.toDouble(),
+      chargeRuleId: (json['charge_rule_id'] as num?)?.toInt(),
+      isCustomUserCharge: json['is_custom_user_charge'] as bool?,
     );
   }
 
@@ -74,9 +57,13 @@ class CalRealTimeCharges {
     };
   }
 
-  bool get isPercent =>
-      chargeType?.toLowerCase() == 'percent';
+  bool get isPercent => chargeType?.toLowerCase() == 'percent';
 
-  bool get isFlat =>
-      chargeType?.toLowerCase() == 'flat';
+  bool get isFlat => chargeType?.toLowerCase() == 'flat';
+
+  String get gstFormat => PriceConverter.convertToNumberFormat(gst ?? 0.0);
+  String get processingFeeFormat =>
+      PriceConverter.convertToNumberFormat(processingFee ?? 0.0);
+  String get totalCardDebitFormat =>
+      PriceConverter.convertToNumberFormat(totalCardDebit ?? 0.0);
 }
