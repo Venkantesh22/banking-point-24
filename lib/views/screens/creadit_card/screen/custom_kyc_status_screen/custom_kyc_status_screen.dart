@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -55,6 +57,7 @@ class CustomKycStatusScreen extends StatelessWidget {
                   KycWithdrawInfoCard(),
                   sizedBoxHeight(height: 20),
                   CustomButton(
+                    isLoading: controller.isLoading,
                     height: 48.h,
                     radius: 8.r,
                     gradient: LinearGradient(
@@ -64,16 +67,17 @@ class CustomKycStatusScreen extends StatelessWidget {
                       ],
                     ),
                     onTap: () {
-                      if (controller
-                              .cardCashWithdrawalCustomKycStatusModel?.status ==
+                      if (controller.cardCashWithdrawalCustomKycStatusModel
+                              ?.kycStatus ==
                           "Verified") {
                         navigate(context: context, page: WithdrawMoneyScreen());
                       }
+                      log("hii");
                     },
                     title: controller.cardCashWithdrawalCustomKycStatusModel
                                 ?.kycStatus ==
                             "Verified"
-                        ? "Container"
+                        ? "(Verified) Container"
                         : "Wait for KYC Verified",
                   )
                 ],

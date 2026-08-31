@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 
 import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/controllers/card_money_controller/custom_kyc_controller.dart';
-import 'package:lekra/data/models/cash%20withdrawal%20model/credit_card_charges_model.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
 import 'package:lekra/services/theme.dart';
