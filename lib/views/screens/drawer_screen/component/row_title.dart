@@ -169,7 +169,7 @@ List<DrawerTitleRowModel> drawerTitleList = [
       isPlayStore: true),
   DrawerTitleRowModel(
     icon: Assets.svgsLogOut,
-    title: "Logout",
+    title: "Log out",
     page: const LoginScreen(),
     islogout: true,
   ),
