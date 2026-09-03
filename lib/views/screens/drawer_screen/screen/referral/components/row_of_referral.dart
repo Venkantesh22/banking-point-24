@@ -52,7 +52,7 @@ List<RowOfReferralWorksModel> rowOfReferralWorksModelList = [
   RowOfReferralWorksModel(
       no: "1",
       label:
-          "Invite friends to use our application with your referral code. They will receive a bonus when joining using your referral code. Every friend who joins and makes a transaction will earn you rewards."),
+          "Invite your friends to use our application with your referral code. They will receive a bonus when they join using your referral code. Every friend who joins and makes a transaction will earn you a reward."),
   RowOfReferralWorksModel(
       no: "2",
       label:
@@ -60,5 +60,5 @@ List<RowOfReferralWorksModel> rowOfReferralWorksModelList = [
   RowOfReferralWorksModel(
       no: "3",
       label:
-          "Get a bonus every time your friends make a transaction, and enjoy rewards that will be added to your account automatically.")
+          "Get a bonus every time your friends make a transaction. The rewards will be added to your account automatically.")
 ];

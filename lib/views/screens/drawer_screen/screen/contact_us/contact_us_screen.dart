@@ -44,7 +44,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
               height: 16,
             ),
             Text(
-              "Don’t hesitate to contact us whether you have a suggestion on our improvement, a complain to discuss or an issue to solve.",
+              "Don’t hesitate to contact us if you have a suggestion for improvement, a complaint, or an issue you’d like us to resolve",
               style: Helper(context)
                   .textTheme
                   .bodyMedium

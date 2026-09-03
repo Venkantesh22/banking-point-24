@@ -88,14 +88,14 @@ List<ContactUSSocialMediaWIdgetModel> contactUSSocialMediaWIdgetList = [
   ContactUSSocialMediaWIdgetModel(
       icon: Assets.imagesInstagramBlack,
       title: "Instagram",
-      subtitle: "7,5K Followers",
+      subtitle: "7.5K Followers",
       onTap: () {
         LaunchHelper.launchInstagram(username: "");
       }),
   ContactUSSocialMediaWIdgetModel(
       icon: Assets.imagesWhatsappBlack,
-      title: "WhatsUp",
-      subtitle: "Available Mon-Sat  • 9 AM - 7 PM",
+      title: "WhatsApp",
+      subtitle: "Available Mon–Sat • 9 AM–7 PM",
       onTap: () {
         LaunchHelper.launchWhatsApp(phone: "11111111111");
       }),

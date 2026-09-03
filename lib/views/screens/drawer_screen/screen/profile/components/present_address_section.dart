@@ -39,7 +39,7 @@ class _PresentAddressSectionState extends State<PresentAddressSection> {
               AppTextFieldWithHeading(
                 bgColor: white,
                 controller: authController.shopNameController,
-                hindText: "Enter a Shop Name",
+                hindText: "Enter Shop Name",
                 heading: "Shop Name",
                 borderRadius: 8,
                 validator: (value) {

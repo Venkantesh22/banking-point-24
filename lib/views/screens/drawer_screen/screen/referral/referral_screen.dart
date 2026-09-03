@@ -159,7 +159,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
               const SizedBox(
                 height: 20,
               ),
-              Text("How the referral works",
+              Text("How the Referral Works",
                   style: Helper(context)
                       .textTheme
                       .bodyMedium
