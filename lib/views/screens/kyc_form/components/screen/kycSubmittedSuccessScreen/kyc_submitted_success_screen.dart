@@ -68,7 +68,7 @@ class KycSubmittedSuccessScreen extends StatelessWidget {
                   // ==================================================
 
                   CustomText(
-                    'KYC Submitted Successfully!',
+                    'KYC Correction Requestid!',
                     textAlign: TextAlign.center,
                     style: Helper(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 24.sp,
