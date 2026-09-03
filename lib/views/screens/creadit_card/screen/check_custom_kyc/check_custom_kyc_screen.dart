@@ -44,7 +44,6 @@ class _CheckCustomerKycScreenState extends State<CheckCustomerKycScreen> {
           appBar: AppBar(
             backgroundColor: white,
             elevation: 0,
-
             title: CustomText(
               'Check Customer KYC',
               style: TextStyle(
@@ -108,9 +107,9 @@ class _CheckCustomerKycScreenState extends State<CheckCustomerKycScreen> {
 
                     Center(
                       child: CustomText(
-                        'We will check if this customer is registered\n'
-                        'and KYC is completed.',
+                        'We will check whether this customer is registered and has completed KYC',
                         textAlign: TextAlign.center,
+                        overflow: TextOverflow.clip,
                         style: TextStyle(
                           fontSize: 14.sp,
                           height: 1.6,
@@ -202,8 +201,7 @@ class _CheckCustomerKycScreenState extends State<CheckCustomerKycScreen> {
                           sizedBoxWidth(width: 10),
                           Expanded(
                             child: CustomText(
-                              'We will check this number in our '
-                              'system and return the customer KYC status.',
+                              'We will check this number in our system and show the customers KYC status',
                               overflow: TextOverflow.clip,
                               style: TextStyle(
                                 fontSize: 12.sp,
