@@ -158,7 +158,7 @@ class AppConstants {
   static String baseUrl = 'https://app.bankingpoint-24.com/';
   static String baseUrlForPrepaidCard = 'https://partner.tpipay.net/';
   //TODO: Change Base Url
-  static String appName = 'Banking point 24';
+  static String appName = 'Bank point 24';
 
   // Auth
   static const String loginUri = 'api/application/v1/login';

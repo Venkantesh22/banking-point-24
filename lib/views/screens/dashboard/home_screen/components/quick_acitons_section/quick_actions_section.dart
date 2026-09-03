@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-import 'package:lekra/controllers/card_money_controller/credit_card_controller.dart';
 import 'package:lekra/generated/assets.dart';
 import 'package:lekra/services/constants.dart';
 import 'package:lekra/services/custom_text.dart';
-import 'package:lekra/services/date_formatters_and_converters.dart';
 import 'package:lekra/services/theme.dart';
 import 'package:lekra/views/screens/creadit_card/screen/check_custom_kyc/check_custom_kyc_screen.dart';
 import 'package:lekra/views/screens/creadit_card/screen/credit_card_transaction_list_screen/credit_card_transaction_list_screen.dart';
 import 'package:lekra/views/screens/pos_machine/connect_pos_device/connect_pos_device_screen/connect_pos_device_screen.dart';
-import 'package:lekra/views/screens/transcation_history/transaction_history_screen.dart';
 
 class QuickActionsSection extends StatelessWidget {
   const QuickActionsSection({super.key, t});
@@ -29,7 +25,7 @@ class QuickActionsSection extends StatelessWidget {
         },
       ),
       _QuickActionItem(
-        title: 'Add\nCard/Manage',
+        title: 'Add\nCard / Manage',
         svgIcon: Assets.svgsAddCard,
         iconColor: const Color(0xFF7C3AED),
         backgroundColor: const Color(0xFFF5F0FF),
@@ -59,7 +55,7 @@ class QuickActionsSection extends StatelessWidget {
         },
       ),
       _QuickActionItem(
-        title: 'Pos Devices',
+        title: 'POS Devices',
         svgIcon: Assets.svgsPosMachine,
         iconColor: const Color(0xFFF59E0B),
         backgroundColor: const Color(0xFFFFF7E8),

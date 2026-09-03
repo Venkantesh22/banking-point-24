@@ -214,7 +214,7 @@ class MerchantProfileCard extends StatelessWidget {
                         ),
                         SizedBox(width: 2.w),
                         CustomText(
-                          '$growthPercentage vs Yesterday',
+                          '$growthPercentage vs yesterday',
                           style: TextStyle(
                             fontSize: 9.sp,
                             fontWeight: FontWeight.w600,

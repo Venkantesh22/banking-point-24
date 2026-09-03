@@ -142,7 +142,7 @@ extension DateTimeExtension on DateTime {
       if (isToday) {
         return 'Today';
       } else if (isYesterday) {
-        return 'Yesterday';
+        return 'yesterday';
       } else {
         return DateFormatters().dMy.format(this);
       }
