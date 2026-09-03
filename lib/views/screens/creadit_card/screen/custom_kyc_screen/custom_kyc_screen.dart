@@ -254,13 +254,13 @@ class _CustomKycScreenState extends State<CustomKycScreen> {
 
                     sizedBoxHeight(height: 22),
                     // --------------------------------------------------
-                    // Pan text
+                    // PAN text
                     // --------------------------------------------------
 
                     AppTextFieldWithHeading(
                       controller: controller.panController,
-                      heading: 'Pan card Number',
-                      hindText: 'Enter you can pan card no.',
+                      heading: 'PAN card Number',
+                      hindText: 'Enter you can PAN card number.',
                       isRequired: true,
                       textInputAction: TextInputAction.next,
                       validator: (value) {

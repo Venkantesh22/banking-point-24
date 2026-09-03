@@ -485,7 +485,7 @@ class _WithdrawAmountCardState extends State<_WithdrawAmountCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CustomText(
-                      'Total money card debit',
+                      'Total amount debited',
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w700,
