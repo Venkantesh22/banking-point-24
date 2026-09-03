@@ -510,7 +510,7 @@ class _TransactionInformationCard extends StatelessWidget {
           copyable: true,
         ),
         _DetailRow(
-          label: 'UTR',
+          label: 'UTR / Reference ID',
           value: transaction.utr ?? '-',
           copyable: true,
         ),

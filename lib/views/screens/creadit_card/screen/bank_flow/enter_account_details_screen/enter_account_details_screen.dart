@@ -239,9 +239,8 @@ class _SecurityMessage extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  'Please enter the customer bank details '
-                  'carefully. The account will be verified '
-                  'before sending money.',
+                  "Please enter the customer's bank details carefully. The account will be verified before the money is sent.",
+                  overflow: TextOverflow.clip,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 10.5.sp,
                         height: 1.45,

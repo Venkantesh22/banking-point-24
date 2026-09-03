@@ -32,7 +32,7 @@ class UpiIdHeader extends StatelessWidget {
           ),
           sizedBoxHeight(height: 7),
           CustomText(
-            "Enter customer's UPI ID to proceed",
+            "Enter the customer's UPI ID to proceed",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp,

@@ -177,7 +177,7 @@ class _WithdrawVerifyOtpScreenState extends State<WithdrawVerifyOtpScreen> {
 
                   CustomText(
                     creditCardController.canResendOtp
-                        ? 'Didn’t receive OTP?'
+                        ? 'Didn’t receive the OTP?'
                         : 'Resend OTP in '
                             '${creditCardController.otpTimerText}',
                     style: TextStyle(

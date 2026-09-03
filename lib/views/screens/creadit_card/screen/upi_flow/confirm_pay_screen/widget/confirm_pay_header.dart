@@ -36,7 +36,7 @@ class ConfirmPayHeader extends StatelessWidget {
           sizedBoxHeight(height: 7),
 
           CustomText(
-            'Please confirm the details to send money',
+            'Please confirm the details before sending money',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp,

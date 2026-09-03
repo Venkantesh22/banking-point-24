@@ -44,7 +44,7 @@ class _ChooseSettlementMethodScreenState
                         SettlementMethodCard(
                           method: SettlementMethod.upi,
                           title: 'UPI ID',
-                          subtitle: 'Send money to customer',
+                          subtitle: 'Send money to the customer',
                           description: 'via UPI ID',
                           iconSvg: Assets.svgsUpi,
                           isSelected: selectedMethod == SettlementMethod.upi,
@@ -60,7 +60,7 @@ class _ChooseSettlementMethodScreenState
                         SettlementMethodCard(
                           method: SettlementMethod.account,
                           title: 'Account',
-                          subtitle: 'Send money to customer',
+                          subtitle: 'Send money to the customer',
                           description: 'via Bank Account',
                           icon: Icons.account_balance_outlined,
                           isSelected:

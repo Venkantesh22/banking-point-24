@@ -32,7 +32,7 @@ class SettlementMethodHeader extends StatelessWidget {
           ),
           sizedBoxHeight(height: 7),
           CustomText(
-            'Choose settlement method',
+            'Choose a settlement method',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp,

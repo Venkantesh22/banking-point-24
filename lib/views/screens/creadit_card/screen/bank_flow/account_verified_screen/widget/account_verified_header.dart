@@ -13,7 +13,6 @@ class AccountVerifiedHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-      
         sizedBoxHeight(height: 24),
 
         // Verified icon
@@ -56,9 +55,9 @@ class AccountVerifiedHeader extends StatelessWidget {
         sizedBoxHeight(height: 8),
 
         CustomText(
-          'Bank account details are valid\n'
-          'and ready to proceed.',
+          'Bank account details have been verified and are ready to proceed',
           textAlign: TextAlign.center,
+          overflow: TextOverflow.clip,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 13.sp,
                 height: 1.5,
