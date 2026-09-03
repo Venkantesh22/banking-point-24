@@ -166,7 +166,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 AppTextFieldWithHeading(
                                   heading: "Shop Name",
                                   controller: authController.shopNameController,
-                                  hindText: "Enter your Shop Name",
+                                  hindText: "Enter your shop name",
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter Shop Name';
@@ -180,7 +180,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   heading: "Address",
                                   controller:
                                       authController.addressNameController,
-                                  hindText: "Enter your Address",
+                                  hindText: "Enter your address",
                                   maxLines: 2,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -201,7 +201,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                         hindText: "City",
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'Please enter City';
+                                            return 'Please enter city';
                                           }
                                           return null;
                                         },
@@ -234,7 +234,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   heading: "Referral Code",
                                   controller:
                                       authController.referralCodeController,
-                                  hindText: "Enter your Referral Code",
+                                  hindText: "Enter your referral code",
                                 ),
                                 const SizedBox(height: 21),
                                 Row(

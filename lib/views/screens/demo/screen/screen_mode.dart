@@ -63,13 +63,12 @@ List<DemoScreenModel> getDemoData(BuildContext context) {
         descr: Padding(
           padding: EdgeInsets.symmetric(horizontal: 30.w),
           child: Row(
-
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Slider1DesWidget(Assets.svgsCurrent, "Instant\nCash", context),
               Slider1DesWidget(
                   Assets.svgsSecurity2, "Secure\nTransactions", context),
-              Slider1DesWidget(Assets.svgsClock, "24x7\nAvailable", context)
+              Slider1DesWidget(Assets.svgsClock, "Available\n24x7", context)
             ],
           ),
         )),

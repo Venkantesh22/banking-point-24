@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 18,
                         ),
                         Text(
-                          "Log In",
+                          "LogIn",
                           style: Helper(context).textTheme.bodySmall?.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
