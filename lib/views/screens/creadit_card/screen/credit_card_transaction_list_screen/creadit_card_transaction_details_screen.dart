@@ -434,7 +434,7 @@ class _DestinationCard extends StatelessWidget {
             value: transaction.customerName ?? '-',
           ),
           _DetailRow(
-            label: 'Mobile',
+            label: 'Mobile Number',
             value: transaction.customerMobile ?? '-',
           ),
           _DetailRow(
@@ -567,7 +567,7 @@ class _CardInformationCard extends StatelessWidget {
           value: transaction.cardBankName ?? '-',
         ),
         _DetailRow(
-          label: 'Card Holder',
+          label: 'CardHolder',
           value: transaction.cardHolderName ?? transaction.customerName ?? '-',
         ),
       ],
