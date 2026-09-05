@@ -39,7 +39,7 @@ class SettlementOptions extends StatelessWidget {
               child: SettlementOptionItem(
                 icon: Icons.payments_outlined,
                 iconColor: const Color(0xFF20A865),
-                title: 'Rent Pay',
+                title: 'Rent Payment',
                 onTap: () {
                   creditCardController.moneyWantCash().then((value) {
                     if (value.isSuccess) {
@@ -64,7 +64,7 @@ class SettlementOptions extends StatelessWidget {
             child: SettlementOptionItem(
               icon: Icons.account_balance_outlined,
               iconColor: primaryColor,
-              title: 'Settlement to Customer',
+              title: 'Customer Settlement',
               onTap: () {
                 navigate(
                     context: context, page: ChooseSettlementMethodScreen());

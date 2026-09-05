@@ -16,7 +16,7 @@ class QuickActionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<_QuickActionItem> actions = [
       _QuickActionItem(
-        title: 'Credit card to Rent',
+        title: 'CC To Rent Payment',
         iconColor: const Color(0xFF16A36A),
         backgroundColor: const Color(0xFFEFFBF5),
         svgIcon: Assets.svgsCashWithdraw,
